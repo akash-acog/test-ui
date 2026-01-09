@@ -25,11 +25,11 @@ export function StatsCard({
   className,
 }: StatsCardProps) {
   const variants = {
-    default: "from-primary/10 to-primary/5",
-    primary: "from-primary/10 to-primary/5",
-    success: "from-chart-3/10 to-chart-3/5",
-    warning: "from-chart-4/10 to-chart-4/5",
-    danger: "from-destructive/10 to-destructive/5",
+    default: "from-primary/5 to-transparent",
+    primary: "from-primary/5 to-transparent",
+    success: "from-chart-3/5 to-transparent",
+    warning: "from-chart-4/5 to-transparent",
+    danger: "from-destructive/5 to-transparent",
   }
 
   const iconVariants = {
@@ -41,10 +41,10 @@ export function StatsCard({
   }
 
   return (
-    <Card className={cn("relative overflow-hidden group card-hover", className)}>
-      {/* Gradient background */}
+    <Card className={cn("relative overflow-hidden group card-hover bg-card", className)}>
+      {/* Subtle gradient accent */}
       <div className={cn(
-        "absolute inset-0 bg-gradient-to-br opacity-50 group-hover:opacity-70 transition-opacity",
+        "absolute inset-0 bg-gradient-to-br opacity-30 pointer-events-none",
         variants[variant]
       )} />
       
