@@ -7,7 +7,7 @@ import { ManagerDashboardPage } from "@/components/pages/manager-dashboard-page"
 import { EmployeeDashboardPage } from "@/components/pages/employee-dashboard-page"
 import { useRouter } from "next/navigation"
 
-export default function DashboardPage() {
+export default function Page() {
   const { user } = useRole()
   const router = useRouter()
 
