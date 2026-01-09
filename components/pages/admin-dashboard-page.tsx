@@ -1,197 +1,372 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Users, Briefcase, Activity, TrendingUp, ArrowUpRight } from "lucide-react"
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { mockEmployees, mockProjects } from "@/lib/mock-data"
-import { useTheme } from "next-themes"
-
-const trendsData = [
-  { month: "Jan", employees: 120, projects: 12, utilization: 78 },
-  { month: "Feb", employees: 128, projects: 14, utilization: 80 },
-  { month: "Mar", employees: 135, projects: 16, utilization: 82 },
-  { month: "Apr", employees: 140, projects: 17, utilization: 84 },
-  { month: "May", employees: 142, projects: 18, utilization: 85 },
-]
-
-const getDepartmentStats = () => {
-  const deptMap = new Map()
-  mockEmployees.forEach((emp) => {
-    if (!deptMap.has(emp.department)) {
-      deptMap.set(emp.department, { name: emp.department, employees: 0, utilization: 85 })
-    }
-    deptMap.get(emp.department).employees++
-  })
-  return Array.from(deptMap.values())
-}
-
-const departmentStats = getDepartmentStats()
-
-const kpiData = [
-  {
-    label: "Total Employees",
-    value: mockEmployees.length.toString(),
-    change: "+5%",
-    icon: Users,
-    bgClass: "bg-primary/10 dark:bg-primary/20",
-    iconClass: "text-primary",
-  },
-  {
-    label: "Active Projects",
-    value: mockProjects.length.toString(),
-    change: "+2%",
-    icon: Briefcase,
-    bgClass: "bg-chart-2/10 dark:bg-chart-2/20",
-    iconClass: "text-chart-2",
-  },
-  {
-    label: "Avg Utilization",
-    value: "85%",
-    change: "+3%",
-    icon: Activity,
-    bgClass: "bg-chart-3/10 dark:bg-chart-3/20",
-    iconClass: "text-chart-3",
-  },
-  {
-    label: "Revenue",
-    value: "$2.4M",
-    change: "+12%",
-    icon: TrendingUp,
-    bgClass: "bg-chart-4/10 dark:bg-chart-4/20",
-    iconClass: "text-chart-4",
-  },
-]
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Users, Briefcase, Activity, Settings, UserPlus, FolderPlus, TrendingUp, Clock, CheckCircle, AlertCircle } from "lucide-react"
+import { mockEmployees, mockProjects, mockAllocations, calculateEmployeeUtilization } from "@/lib/mock-data"
 
 interface AdminDashboardPageProps {
-  onViewEmployee?: (id: string, from: string) => void
+  onNavigate?: (page: string) => void
+  onViewEmployee?: (id: string) => void
 }
 
-export function AdminDashboardPage({ onViewEmployee }: AdminDashboardPageProps) {
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
-  // Theme-aware chart colors
-  const chartColors = {
-    primary: isDark ? "hsl(263.4 70% 50.4%)" : "hsl(262.1 83.3% 57.8%)",
-    secondary: isDark ? "hsl(280 65% 60%)" : "hsl(263.4 70% 50.4%)",
-    tertiary: isDark ? "hsl(291 47.1% 50.8%)" : "hsl(280 60% 55%)",
-    border: isDark ? "hsl(217.2 32.6% 17.5%)" : "hsl(214.3 31.8% 91.4%)",
-    text: isDark ? "hsl(215 20.2% 65.1%)" : "hsl(215.4 16.3% 46.9%)",
-    cardBg: isDark ? "hsl(222.2 84% 4.9%)" : "hsl(0 0% 100%)",
+export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboardPageProps) {
+  // Calculate stats
+  const activeEmployees = mockEmployees.filter((emp) => emp.status === "Active").length
+  const totalEmployees = mockEmployees.length
+  
+  const projectsByStatus = {
+    planned: mockProjects.filter((p) => p.status === "Planned").length,
+    active: mockProjects.filter((p) => p.status === "Active").length,
+    completed: mockProjects.filter((p) => p.status === "Completed").length,
   }
 
+  // Allocation overview
+  const allocationStats = mockEmployees.reduce(
+    (acc, emp) => {
+      const utilization = calculateEmployeeUtilization(emp.id)
+      if (utilization === 0) acc.free++
+      else if (utilization === 100) acc.fullyAllocated++
+      else acc.partiallyAllocated++
+      return acc
+    },
+    { free: 0, partiallyAllocated: 0, fullyAllocated: 0 }
+  )
+
+  // Recent activity (last 7 days)
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  
+  const recentAllocations = mockAllocations
+    .filter((a) => new Date(a.startDate) >= sevenDaysAgo)
+    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+    .slice(0, 5)
+
+  const recentEmployees = mockEmployees
+    .filter((emp) => new Date(emp.joinDate) >= sevenDaysAgo)
+    .sort((a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime())
+    .slice(0, 3)
+
+  const recentProjects = mockProjects
+    .filter((p) => p.status === "Completed" && new Date(p.endDate) >= sevenDaysAgo)
+    .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+    .slice(0, 3)
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
-        <p className="mt-2 text-sm text-muted-foreground">System overview and key metrics at a glance</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-gradient">Admin Dashboard</h1>
+          <p className="mt-2 text-sm text-muted-foreground">System overview and quick access to management functions</p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={() => onNavigate?.("employees")} className="gap-2 bg-gradient-primary text-white border-0">
+            <UserPlus className="h-4 w-4" />
+            Add Employee
+          </Button>
+          <Button onClick={() => onNavigate?.("projects")} variant="outline" className="gap-2">
+            <FolderPlus className="h-4 w-4" />
+            Add Project
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* Key Metrics - Total Employees & Projects */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {kpiData.map((kpi, idx) => {
-          const Icon = kpi.icon
-          return (
-            <Card
-              key={idx}
-              className={`border-border/50 ${kpi.bgClass} p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-card`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{kpi.label}</p>
-                  <p className="text-3xl font-bold text-foreground">{kpi.value}</p>
-                  <div className="flex items-center gap-1">
-                    <ArrowUpRight className={`h-4 w-4 ${kpi.iconClass}`} />
-                    <p className={`text-xs font-semibold ${kpi.iconClass}`}>{kpi.change}</p>
-                  </div>
-                </div>
-                <Icon className={`h-8 w-8 ${kpi.iconClass}`} />
+        <Card className="border-border/50 bg-gradient-to-br from-primary/10 to-primary/5 p-6 card-hover">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Employees</p>
+              <p className="text-4xl font-bold text-foreground">{activeEmployees}</p>
+              <p className="text-xs text-muted-foreground">Active workforce</p>
+            </div>
+            <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-border/50 bg-gradient-to-br from-chart-3/10 to-chart-3/5 p-6 card-hover">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Active Projects</p>
+              <p className="text-4xl font-bold text-foreground">{projectsByStatus.active}</p>
+              <div className="flex gap-2 text-xs">
+                <span className="text-muted-foreground">{projectsByStatus.planned} Planned</span>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-muted-foreground">{projectsByStatus.completed} Done</span>
               </div>
-            </Card>
-          )
-        })}
+            </div>
+            <div className="h-12 w-12 rounded-xl bg-chart-3/20 flex items-center justify-center">
+              <Briefcase className="h-6 w-6 text-chart-3" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-border/50 bg-gradient-to-br from-chart-4/10 to-chart-4/5 p-6 card-hover">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Projects</p>
+              <p className="text-4xl font-bold text-foreground">{mockProjects.length}</p>
+              <div className="flex gap-3 text-xs">
+                <Badge variant="outline" className="text-xs">
+                  <Activity className="h-3 w-3 mr-1" />
+                  {projectsByStatus.active} Active
+                </Badge>
+              </div>
+            </div>
+            <div className="h-12 w-12 rounded-xl bg-chart-4/20 flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-chart-4" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-border/50 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-6 card-hover">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">System Health</p>
+              <p className="text-4xl font-bold text-chart-3">Good</p>
+              <p className="text-xs text-muted-foreground">All systems operational</p>
+            </div>
+            <div className="h-12 w-12 rounded-xl bg-chart-3/20 flex items-center justify-center">
+              <CheckCircle className="h-6 w-6 text-chart-3" />
+            </div>
+          </div>
+        </Card>
       </div>
 
-      {/* Charts Section */}
+      {/* Allocation Overview */}
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
+          <Activity className="h-6 w-6 text-primary" />
+          Allocation Overview
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="border-border/50 p-6 card-hover bg-chart-3/5">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-muted-foreground">Free (0% Utilization)</p>
+                <CheckCircle className="h-5 w-5 text-chart-3" />
+              </div>
+              <p className="text-3xl font-bold text-chart-3">{allocationStats.free}</p>
+              <p className="text-xs text-muted-foreground">Employees ready for allocation</p>
+            </div>
+          </Card>
+
+          <Card className="border-border/50 p-6 card-hover bg-primary/5">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-muted-foreground">Partially Allocated</p>
+                <Activity className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-3xl font-bold text-primary">{allocationStats.partiallyAllocated}</p>
+              <p className="text-xs text-muted-foreground">Employees with 1-99% utilization</p>
+            </div>
+          </Card>
+
+          <Card className="border-border/50 p-6 card-hover bg-chart-4/5">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-muted-foreground">Fully Allocated</p>
+                <AlertCircle className="h-5 w-5 text-chart-4" />
+              </div>
+              <p className="text-3xl font-bold text-chart-4">{allocationStats.fullyAllocated}</p>
+              <p className="text-xs text-muted-foreground">Employees at 100% capacity</p>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Trends Chart */}
-        <Card className="border-border/50 p-6 bg-card">
-          <h2 className="text-xl font-bold text-foreground mb-4">Growth Trends</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trendsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.border} opacity={0.5} />
-              <XAxis 
-                dataKey="month" 
-                stroke={chartColors.text}
-                style={{ fontSize: '12px' }}
-              />
-              <YAxis 
-                stroke={chartColors.text}
-                style={{ fontSize: '12px' }}
-              />
-              <Tooltip
-                contentStyle={{ 
-                  backgroundColor: chartColors.cardBg,
-                  border: `1px solid ${chartColors.border}`,
-                  borderRadius: '6px',
-                  color: chartColors.text
-                }}
-                labelStyle={{ color: chartColors.text }}
-              />
-              <Legend 
-                wrapperStyle={{ color: chartColors.text }}
-              />
-              <Line
-                type="monotone"
-                dataKey="utilization"
-                stroke={chartColors.primary}
-                strokeWidth={3}
-                dot={{ fill: chartColors.primary, r: 5 }}
-                activeDot={{ r: 7 }}
-                name="Utilization %"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <Card className="border-border/50 p-6 card-hover">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            User Management
+          </h3>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("settings")}
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Create New User
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("settings")}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Assign Roles & Permissions
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("employees")}
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Manage All Users
+            </Button>
+          </div>
         </Card>
 
-        {/* Department Stats */}
-        <Card className="border-border/50 p-6 bg-card">
-          <h2 className="text-xl font-bold text-foreground mb-4">Department Overview</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={departmentStats}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.border} opacity={0.5} />
-              <XAxis 
-                dataKey="name" 
-                stroke={chartColors.text}
-                style={{ fontSize: '12px' }}
-              />
-              <YAxis 
-                stroke={chartColors.text}
-                style={{ fontSize: '12px' }}
-              />
-              <Tooltip
-                contentStyle={{ 
-                  backgroundColor: chartColors.cardBg,
-                  border: `1px solid ${chartColors.border}`,
-                  borderRadius: '6px',
-                  color: chartColors.text
-                }}
-                labelStyle={{ color: chartColors.text }}
-              />
-              <Legend 
-                wrapperStyle={{ color: chartColors.text }}
-              />
-              <Bar 
-                dataKey="employees" 
-                fill={chartColors.primary}
-                radius={[6, 6, 0, 0]}
-                name="Employees"
-              />
-            </BarChart>
-          </ResponsiveContainer>
+        <Card className="border-border/50 p-6 card-hover">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Settings className="h-5 w-5 text-primary" />
+            System Configuration
+          </h3>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("settings")}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Manage Departments
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("settings")}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Manage Skills Taxonomy
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => onNavigate?.("settings")}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Manage Office Locations
+            </Button>
+          </div>
         </Card>
       </div>
+
+      {/* Recent Activity */}
+      <Card className="border-border/50 p-6 card-hover">
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+          <Clock className="h-6 w-6 text-primary" />
+          Recent Activity
+          <Badge variant="secondary" className="ml-2">Last 7 Days</Badge>
+        </h2>
+
+        <div className="space-y-6">
+          {/* Recent Allocations */}
+          {recentAllocations.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Latest Allocations
+              </h3>
+              <div className="space-y-2">
+                {recentAllocations.map((alloc) => {
+                  const employee = mockEmployees.find((e) => e.id === alloc.employee)
+                  const project = mockProjects.find((p) => p.id === alloc.project)
+                  return (
+                    <div
+                      key={alloc.id}
+                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Activity className="h-4 w-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            <span className="text-primary cursor-pointer hover:underline" onClick={() => onViewEmployee?.(alloc.employee)}>
+                              {employee?.name}
+                            </span>
+                            {" "}allocated to{" "}
+                            <span className="text-primary">{project?.name}</span>
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {alloc.allocationPercent}% • {new Date(alloc.startDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant={alloc.billable ? "default" : "secondary"}>
+                        {alloc.billable ? "Billable" : "Non-billable"}
+                      </Badge>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Employees */}
+          {recentEmployees.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                New Employees
+              </h3>
+              <div className="space-y-2">
+                {recentEmployees.map((emp) => (
+                  <div
+                    key={emp.id}
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                    onClick={() => onViewEmployee?.(emp.id)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
+                        <UserPlus className="h-4 w-4 text-chart-3" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{emp.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {emp.designation} • {emp.department}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(emp.joinDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Completed Projects */}
+          {recentProjects.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Completed Projects
+              </h3>
+              <div className="space-y-2">
+                {recentProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-chart-4/10 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle className="h-4 w-4 text-chart-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{project.name}</p>
+                        <p className="text-xs text-muted-foreground">{project.code}</p>
+                      </div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(project.endDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {recentAllocations.length === 0 && recentEmployees.length === 0 && recentProjects.length === 0 && (
+            <p className="text-center text-muted-foreground py-8">No recent activity in the last 7 days</p>
+          )}
+        </div>
+      </Card>
     </div>
   )
 }
