@@ -23,7 +23,6 @@ export default function DashboardLayout({
       return
     }
 
-    // Extract page from pathname
     const page = pathname.split("/")[1] || "dashboard"
     if (!canAccessPage(user.role, page)) {
       router.push("/dashboard")
@@ -33,16 +32,25 @@ export default function DashboardLayout({
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="fixed inset-0 bg-mesh-gradient opacity-40 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-dot-pattern opacity-50 pointer-events-none"></div>
+      
+      {/* Animated blobs */}
+      <div className="fixed top-0 -left-4 w-72 h-72 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none"></div>
+      <div className="fixed top-0 -right-4 w-72 h-72 bg-purple-300/10 dark:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none"></div>
+      <div className="fixed -bottom-8 left-20 w-72 h-72 bg-indigo-300/10 dark:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000 pointer-events-none"></div>
+      
       <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? "ml-16" : "ml-64"}`}>
+      <div className={`transition-all duration-300 ease-in-out ${sidebarCollapsed ? "ml-16" : "ml-64"}`}>
         <Header />
-        <main className="p-6 lg:p-8 animate-fade-in">
+        <main className="relative z-10 p-6 lg:p-8 animate-fade-in">
           <div className="max-w-7xl mx-auto">
             <Suspense fallback={
               <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-48 bg-muted rounded"></div>
-                <div className="h-64 bg-muted rounded"></div>
+                <div className="h-8 w-48 bg-muted/50 rounded-lg"></div>
+                <div className="h-64 bg-muted/50 rounded-xl"></div>
               </div>
             }>
               {children}
