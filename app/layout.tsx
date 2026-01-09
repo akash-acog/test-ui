@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { RoleProvider } from "@/lib/role-context"
+import { Providers } from "@/app/providers"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -37,9 +38,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <RoleProvider>
-          {children}
-        </RoleProvider>
+        <Providers>
+          <RoleProvider>
+            {children}
+          </RoleProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>
