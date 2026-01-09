@@ -41,7 +41,10 @@ export function StatsCard({
   }
 
   return (
-    <Card className={cn("relative overflow-hidden group card-hover bg-card", className)}>
+    <Card 
+      className={cn("relative overflow-hidden group card-hover", className)}
+      style={{ backgroundColor: 'hsl(var(--card))', opacity: 1 }}
+    >
       {/* Subtle gradient accent */}
       <div className={cn(
         "absolute inset-0 bg-gradient-to-br opacity-30 pointer-events-none",

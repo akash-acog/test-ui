@@ -9,8 +9,10 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
       className={cn(
         'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-border py-6',
         'shadow-sm hover:shadow-md transition-all duration-300',
+        '[background-color:hsl(var(--card))]', // Force opaque background
         className,
       )}
+      style={{ backgroundColor: 'hsl(var(--card))', opacity: 1 }}
       {...props}
     />
   )
