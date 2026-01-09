@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin, Briefcase, Calendar, Award, TrendingUp, Target, User } from "lucide-react"
 import { getEmployeeById, calculateEmployeeUtilization, getEmployeeAvailability } from "@/lib/mock-data"
 import type { UserRole } from "@/lib/role-config"
+import { Progress } from "@/components/ui/progress"
 
 interface ProfilePageProps {
   userRole: UserRole
@@ -31,12 +32,25 @@ const calculateAge = (dob: string): number => {
 
 const getProficiencyColor = (proficiency: string) => {
   const colors = {
-    Expert: "bg-chart-3/20 text-chart-3",
-    Advanced: "bg-primary/20 text-primary",
-    Intermediate: "bg-accent/20 text-accent",
-    Beginner: "bg-muted text-muted-foreground",
+    Expert: "bg-chart-3/20 text-chart-3 border-chart-3/30",
+    Advanced: "bg-primary/20 text-primary border-primary/30",
+    Intermediate: "bg-chart-4/20 text-chart-4 border-chart-4/30",
+    Beginner: "bg-muted text-muted-foreground border-border",
   }
   return colors[proficiency as keyof typeof colors] || colors.Beginner
+}
+
+const getProficiencyIcon = (proficiency: string) => {
+  switch (proficiency) {
+    case "Expert":
+      return "🏆"
+    case "Advanced":
+      return "⭐"
+    case "Intermediate":
+      return "📈"
+    default:
+      return "🌱"
+  }
 }
 
 export function ProfilePage({ userRole, currentUserId }: ProfilePageProps) {
@@ -58,37 +72,55 @@ export function ProfilePage({ userRole, currentUserId }: ProfilePageProps) {
   }
 
   const canEdit = userRole === "employee" || userRole === "admin"
+  const initials = employee.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
 
   return (
-    <div className="flex-1 flex flex-col bg-background">
-      {/* Header with gradient background */}
-      <div className="bg-gradient-to-r from-primary to-primary/70 px-8 py-12 text-primary-foreground">
-        <div className="mx-auto w-full">
+    <div className="flex-1 flex flex-col bg-background animate-fade-in">
+      {/* Beautiful gradient header */}
+      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 px-8 py-16 text-white relative overflow-hidden">
+        {/* Animated background blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        
+        <div className="mx-auto w-full relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <div className="h-24 w-24 rounded-full bg-primary-foreground/20 flex items-center justify-center text-2xl font-bold text-primary-foreground">
-                {employee.code.slice(-2)}
+              {/* Large gradient avatar */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-white/20 rounded-3xl blur-2xl" />
+                <div className="relative h-32 w-32 rounded-3xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm flex items-center justify-center text-4xl font-bold text-white shadow-2xl border-2 border-white/20">
+                  {initials}
+                </div>
+                {/* Status badge */}
+                <div className="absolute -bottom-2 -right-2 bg-chart-3 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border-2 border-white">
+                  {employee.status}
+                </div>
               </div>
+              
               <div>
-                <h1 className="text-4xl font-bold">{employee.name}</h1>
-                <p className="text-primary-foreground/80">{employee.designation}</p>
-                <p className="text-sm text-primary-foreground/60 mt-1">Employee Code: {employee.code}</p>
-                <Badge className="mt-2 bg-primary-foreground text-primary">{employee.status}</Badge>
+                <h1 className="text-5xl font-bold mb-2">{employee.name}</h1>
+                <p className="text-white/90 text-xl mb-2">{employee.designation}</p>
+                <p className="text-sm text-white/70 font-mono bg-white/10 px-3 py-1 rounded-full inline-block">
+                  {employee.code}
+                </p>
               </div>
             </div>
 
-            <div className="flex gap-6 text-primary-foreground">
-              <div className="text-center">
-                <p className="text-sm opacity-80">Utilization</p>
-                <p className="text-3xl font-bold">{utilization}%</p>
+            <div className="flex gap-6">
+              <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <TrendingUp className="h-8 w-8 mx-auto mb-2" />
+                <p className="text-sm opacity-90">Utilization</p>
+                <p className="text-4xl font-bold mt-1">{utilization}%</p>
               </div>
-              <div className="text-center">
-                <p className="text-sm opacity-80">Availability</p>
-                <p className="text-3xl font-bold">{100 - utilization}%</p>
+              <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <Target className="h-8 w-8 mx-auto mb-2" />
+                <p className="text-sm opacity-90">Available</p>
+                <p className="text-4xl font-bold mt-1">{100 - utilization}%</p>
               </div>
-              <div className="text-center">
-                <p className="text-sm opacity-80">Tenure</p>
-                <p className="text-3xl font-bold">{tenure}y</p>
+              <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <Award className="h-8 w-8 mx-auto mb-2" />
+                <p className="text-sm opacity-90">Tenure</p>
+                <p className="text-4xl font-bold mt-1">{tenure}y</p>
               </div>
             </div>
           </div>
@@ -96,67 +128,100 @@ export function ProfilePage({ userRole, currentUserId }: ProfilePageProps) {
       </div>
 
       <div className="flex-1 overflow-auto">
-        <div className="mx-auto w-full px-8 py-8">
+        <div className="mx-auto w-full px-8 py-8 -mt-8 relative z-20">
           <div className="grid gap-6 md:grid-cols-3 mb-8">
             {/* Contact Info */}
-            <Card className="border-border/50 p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Contact Information</h3>
-              <div className="space-y-4 text-sm">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-primary" />
-                  <span className="text-muted-foreground">{employee.email}</span>
+            <Card className="border-border bg-card p-6 card-hover shadow-lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-primary" />
-                  <span className="text-muted-foreground">{employee.phone}</span>
+                <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                  <Mail className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground truncate">{employee.email}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-muted-foreground">{employee.location}</span>
+                <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                  <Phone className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">{employee.phone}</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                  <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="text-sm text-muted-foreground">{employee.location}</span>
                 </div>
               </div>
             </Card>
 
             {/* Employment Info */}
-            <Card className="border-border/50 p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Employment</h3>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Department</p>
-                  <p className="font-medium text-foreground">{employee.department}</p>
+            <Card className="border-border bg-card p-6 card-hover shadow-lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center">
+                  <Briefcase className="h-5 w-5 text-chart-3" />
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Type</p>
-                  <p className="font-medium text-foreground">{employee.type}</p>
+                <h3 className="text-lg font-semibold text-foreground">Employment</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="p-3 bg-muted/30 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">Department</p>
+                  <p className="font-semibold text-foreground">{employee.department}</p>
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Joined</p>
-                  <p className="font-medium text-foreground">{new Date(employee.joinDate).toLocaleDateString()}</p>
+                <div className="p-3 bg-muted/30 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">Type</p>
+                  <Badge className="bg-primary/10 text-primary border-primary/20">{employee.type}</Badge>
+                </div>
+                <div className="p-3 bg-muted/30 rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">Joined</p>
+                  <p className="font-semibold text-foreground">{new Date(employee.joinDate).toLocaleDateString()}</p>
                 </div>
               </div>
             </Card>
 
             {/* Skills Summary */}
-            <Card className="border-border/50 p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Skills</h3>
-              <div className="flex flex-wrap gap-2">
+            <Card className="border-border bg-card p-6 card-hover shadow-lg">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-10 w-10 rounded-lg bg-chart-4/10 flex items-center justify-center">
+                  <Award className="h-5 w-5 text-chart-4" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground">Top Skills</h3>
+              </div>
+              <div className="space-y-2">
                 {employee.skills.slice(0, 5).map((skill, idx) => (
-                  <Badge key={idx} variant="secondary" className={getProficiencyColor(skill.proficiency)}>
-                    {skill.name}
-                  </Badge>
+                  <div key={idx} className="flex items-center gap-2">
+                    <span className="text-lg">{getProficiencyIcon(skill.proficiency)}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-foreground">{skill.name}</span>
+                        <Badge variant="secondary" className={getProficiencyColor(skill.proficiency) + " text-xs"}>
+                          {skill.proficiency}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </Card>
           </div>
 
           {/* Full Skills Display */}
-          <Card className="border-border/50 p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">All Skills & Proficiencies</h3>
+          <Card className="border-border bg-card p-6 shadow-lg card-hover">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">All Skills & Proficiencies ({employee.skills.length})</h3>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {employee.skills.map((skill, idx) => (
-                <div key={idx} className={`p-4 rounded-lg ${getProficiencyColor(skill.proficiency)}`}>
-                  <p className="font-medium">{skill.name}</p>
-                  <p className="text-sm opacity-75">{skill.proficiency}</p>
+                <div key={idx} className={`p-4 rounded-xl border transition-all hover:scale-105 hover:shadow-md ${getProficiencyColor(skill.proficiency)}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">{getProficiencyIcon(skill.proficiency)}</span>
+                    <p className="font-semibold text-lg">{skill.name}</p>
+                  </div>
+                  <Badge className={getProficiencyColor(skill.proficiency) + " text-xs"}>
+                    {skill.proficiency}
+                  </Badge>
                 </div>
               ))}
             </div>
