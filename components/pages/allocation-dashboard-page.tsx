@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, AlertCircle, User, Calendar, TrendingUp, Target } from "lucide-react"
+import { Plus, Search, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useRole } from "@/lib/role-context"
 import { hasPermission } from "@/lib/role-config"
@@ -34,7 +34,6 @@ interface AllocationDashboardPageProps {
   userRole?: string
 }
 
-// Avatar gradients
 const avatarGradients = [
   "from-indigo-500 to-purple-600",
   "from-pink-500 to-rose-600",
@@ -42,13 +41,9 @@ const avatarGradients = [
   "from-green-500 to-emerald-600",
   "from-orange-500 to-amber-600",
   "from-violet-500 to-fuchsia-600",
-  "from-teal-500 to-cyan-600",
-  "from-red-500 to-pink-600",
 ]
 
-const getGradientForIndex = (index: number) => {
-  return avatarGradients[index % avatarGradients.length]
-}
+const getGradientForIndex = (index: number) => avatarGradients[index % avatarGradients.length]
 
 export function AllocationDashboardPage({ onViewEmployee, userRole }: AllocationDashboardPageProps) {
   const { user } = useRole()
@@ -95,28 +90,10 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
     const matchesSearch = item.employee.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesDept = departmentFilter === "all" || item.employee.department === departmentFilter
     const matchesStatus = statusFilter === "all" || item.availabilityStatus === statusFilter
-
     return matchesSearch && matchesDept && matchesStatus
   })
 
   const overallocatedEmployees = employeeAllocations.filter((item) => item.utilization > 100)
-
-  const getStatusColor = (availability: string) => {
-    const colors: Record<string, string> = {
-      Free: "bg-chart-3/10 text-chart-3 border-chart-3/20",
-      Partial: "bg-chart-4/10 text-chart-4 border-chart-4/20",
-      "Fully Allocated": "bg-chart-1/10 text-chart-1 border-chart-1/20",
-    }
-    return colors[availability] || "bg-muted text-muted-foreground"
-  }
-
-  const getUtilizationColor = (utilization: number) => {
-    if (utilization > 100) return "bg-destructive"
-    if (utilization === 100) return "bg-chart-4"
-    if (utilization >= 50) return "bg-chart-2"
-    return "bg-chart-3"
-  }
-
   const canCreate = hasPermission(user?.role || userRole || "employee", "manage_allocations")
   const departments = Array.from(new Set(mockEmployees.map((e) => e.department)))
 
@@ -148,12 +125,12 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
         {canCreate && (
           <Dialog open={isAddAllocationOpen} onOpenChange={setIsAddAllocationOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-gradient-primary text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 border-0">
+              <Button className="gap-2 bg-gradient-primary text-white shadow-lg border-0">
                 <Plus className="h-4 w-4" />
                 New Allocation
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Allocate Resource to Project</DialogTitle>
                 <DialogDescription>Assign an employee to a project with specific allocation details</DialogDescription>
@@ -161,127 +138,37 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
               <div className="space-y-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Select Employee</Label>
-                    <Select
-                      value={allocationForm.employee}
-                      onValueChange={(v) => setAllocationForm({ ...allocationForm, employee: v })}
-                    >
-                      <SelectTrigger className="bg-muted/30 border-border">
-                        <SelectValue placeholder="Choose employee" />
-                      </SelectTrigger>
+                    <Label>Employee</Label>
+                    <Select value={allocationForm.employee} onValueChange={(v) => setAllocationForm({ ...allocationForm, employee: v })}>
+                      <SelectTrigger className="bg-muted/30"><SelectValue placeholder="Choose employee" /></SelectTrigger>
                       <SelectContent>
-                        {mockEmployees.map((emp) => (
-                          <SelectItem key={emp.id} value={emp.id}>
-                            {emp.name} ({emp.code})
-                          </SelectItem>
-                        ))}
+                        {mockEmployees.map((emp) => (<SelectItem key={emp.id} value={emp.id}>{emp.name} ({emp.code})</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Select Project</Label>
-                    <Select
-                      value={allocationForm.project}
-                      onValueChange={(v) => setAllocationForm({ ...allocationForm, project: v })}
-                    >
-                      <SelectTrigger className="bg-muted/30 border-border">
-                        <SelectValue placeholder="Choose project" />
-                      </SelectTrigger>
+                    <Label>Project</Label>
+                    <Select value={allocationForm.project} onValueChange={(v) => setAllocationForm({ ...allocationForm, project: v })}>
+                      <SelectTrigger className="bg-muted/30"><SelectValue placeholder="Choose project" /></SelectTrigger>
                       <SelectContent>
-                        {mockProjects.map((proj) => (
-                          <SelectItem key={proj.id} value={proj.id}>
-                            {proj.name} ({proj.code})
-                          </SelectItem>
-                        ))}
+                        {mockProjects.map((proj) => (<SelectItem key={proj.id} value={proj.id}>{proj.name} ({proj.code})</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-
-                <div className="space-y-3">
-                  <Label>Allocation % (Max: {selectedEmployeeAvailability}% available)</Label>
-                  <div className="space-y-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max={selectedEmployeeAvailability}
-                      value={allocationForm.allocationPercent}
-                      onChange={(e) => setAllocationForm({ ...allocationForm, allocationPercent: e.target.value })}
-                      className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
-                    />
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">
-                        Selected:{" "}
-                        <span className="font-bold text-foreground">
-                          {allocationForm.allocationPercent}%
-                        </span>
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        Max available: {selectedEmployeeAvailability}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="startDate">Start Date</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={allocationForm.startDate}
-                      onChange={(e) => setAllocationForm({ ...allocationForm, startDate: e.target.value })}
-                      className="bg-muted/30 border-border"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="endDate">End Date</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={allocationForm.endDate}
-                      onChange={(e) => setAllocationForm({ ...allocationForm, endDate: e.target.value })}
-                      className="bg-muted/30 border-border"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="billable"
-                      checked={allocationForm.billable}
-                      onChange={(e) => setAllocationForm({ ...allocationForm, billable: e.target.checked })}
-                      className="rounded border-border"
-                    />
-                    <Label htmlFor="billable" className="cursor-pointer font-medium">
-                      Billable Work
-                    </Label>
-                  </div>
-                </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (Optional)</Label>
-                  <Input
-                    id="notes"
-                    placeholder="Add any specific notes about this allocation"
-                    value={allocationForm.notes}
-                    onChange={(e) => setAllocationForm({ ...allocationForm, notes: e.target.value })}
-                    className="bg-muted/30 border-border"
-                  />
+                  <Label>Allocation % (Max: {selectedEmployeeAvailability}%)</Label>
+                  <input type="range" min="0" max={selectedEmployeeAvailability} value={allocationForm.allocationPercent} onChange={(e) => setAllocationForm({ ...allocationForm, allocationPercent: e.target.value })} className="w-full" />
+                  <div className="flex justify-between"><span className="text-sm">Selected: <strong>{allocationForm.allocationPercent}%</strong></span><span className="text-xs text-muted-foreground">Max: {selectedEmployeeAvailability}%</span></div>
                 </div>
-
-                <div className="flex justify-end gap-2 pt-4 border-t border-border">
-                  <Button variant="outline" onClick={() => setIsAddAllocationOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleAllocateResource}
-                    className="bg-gradient-primary text-white border-0"
-                  >
-                    Create Allocation
-                  </Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2"><Label>Start Date</Label><Input type="date" value={allocationForm.startDate} onChange={(e) => setAllocationForm({ ...allocationForm, startDate: e.target.value })} className="bg-muted/30" /></div>
+                  <div className="space-y-2"><Label>End Date</Label><Input type="date" value={allocationForm.endDate} onChange={(e) => setAllocationForm({ ...allocationForm, endDate: e.target.value })} className="bg-muted/30" /></div>
+                </div>
+                <div className="flex items-center gap-2"><input type="checkbox" id="billable" checked={allocationForm.billable} onChange={(e) => setAllocationForm({ ...allocationForm, billable: e.target.checked })} /><Label htmlFor="billable">Billable Work</Label></div>
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <Button variant="outline" onClick={() => setIsAddAllocationOpen(false)}>Cancel</Button>
+                  <Button onClick={handleAllocateResource} className="bg-gradient-primary text-white border-0">Create</Button>
                 </div>
               </div>
             </DialogContent>
@@ -290,213 +177,114 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
       </div>
 
       {overallocatedEmployees.length > 0 && (
-        <Alert className="border-destructive/50 bg-destructive/10 animate-fade-in">
+        <Alert className="border-destructive/50 bg-destructive/10">
           <AlertCircle className="h-4 w-4 text-destructive" />
           <AlertDescription className="text-destructive font-medium">
-            {overallocatedEmployees.length} employee(s) with over-allocation conflicts exceeding 100% utilization
+            {overallocatedEmployees.length} employee(s) over-allocated (>100% utilization)
           </AlertDescription>
         </Alert>
       )}
 
-      <Card className="border-border bg-card p-6 card-hover">
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide flex items-center gap-2">
-            <Search className="h-4 w-4 text-primary" />
-            Search & Filter
-          </h3>
-          <div className="grid gap-3 md:grid-cols-4">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by employee name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-muted/30 border-border focus:border-primary transition-colors"
-                />
-              </div>
-            </div>
-
-            <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="bg-muted/30 border-border">
-                <SelectValue placeholder="Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                {departments.map((dept) => (
-                  <SelectItem key={dept} value={dept}>
-                    {dept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-muted/30 border-border">
-                <SelectValue placeholder="Availability" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Free">Free</SelectItem>
-                <SelectItem value="Partial">Partial</SelectItem>
-                <SelectItem value="Fully Allocated">Fully Allocated</SelectItem>
-              </SelectContent>
-            </Select>
+      <Card className="p-4">
+        <div className="grid gap-3 md:grid-cols-4">
+          <div className="md:col-span-2 relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search employees..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9 bg-muted/30" />
           </div>
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="bg-muted/30"><SelectValue placeholder="Department" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {departments.map((dept) => (<SelectItem key={dept} value={dept}>{dept}</SelectItem>))}
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="bg-muted/30"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="Free">Free</SelectItem>
+              <SelectItem value="Partial">Partial</SelectItem>
+              <SelectItem value="Fully Allocated">Fully Allocated</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
-      <div className="space-y-4">
-        {filteredAllocations.map((item, index) => {
-          const isOverallocated = item.utilization > 100
-          const initials = item.employee.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
-          const gradient = getGradientForIndex(index)
+      {/* Compact table view */}
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/50 border-b">
+              <tr className="text-left text-sm">
+                <th className="p-3 font-semibold">Employee</th>
+                <th className="p-3 font-semibold">Department</th>
+                <th className="p-3 font-semibold">Utilization</th>
+                <th className="p-3 font-semibold">Available</th>
+                <th className="p-3 font-semibold">Status</th>
+                <th className="p-3 font-semibold">Active Allocations</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAllocations.map((item, index) => {
+                const isOverallocated = item.utilization > 100
+                const initials = item.employee.name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
+                const gradient = getGradientForIndex(index)
 
-          return (
-            <Card
-              key={item.employee.id}
-              className={`border transition-all duration-300 card-hover overflow-hidden ${
-                isOverallocated
-                  ? "border-destructive/50 bg-destructive/5"
-                  : "border-border bg-card"
-              }`}
-            >
-              {/* Gradient accent bar */}
-              <div className={`h-2 bg-gradient-to-r ${gradient}`} />
-              
-              <div className="p-6 space-y-4">
-                <div className="flex items-start gap-4">
-                  {/* Gradient Avatar */}
-                  <div className="relative flex-shrink-0">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${gradient} rounded-xl opacity-20 blur-xl`} />
-                    <div className={`relative h-14 w-14 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg`}>
-                      <span className="text-white font-bold text-lg">{initials}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-foreground">{item.employee.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {item.employee.code} • {item.employee.designation} • {item.employee.department}
-                    </p>
-                  </div>
-                  <div className="flex gap-2 flex-shrink-0">
-                    <Badge className={getStatusColor(item.availabilityStatus)}>{item.availabilityStatus}</Badge>
-                    {isOverallocated && (
-                      <Badge variant="destructive">
-                        Over-allocated
+                return (
+                  <tr key={item.employee.id} className={`border-b hover:bg-muted/30 transition-colors ${isOverallocated ? "bg-destructive/5" : ""}`}>
+                    <td className="p-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm flex-shrink-0`}>
+                          <span className="text-white font-bold text-sm">{initials}</span>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">{item.employee.name}</p>
+                          <p className="text-xs text-muted-foreground">{item.employee.code} • {item.employee.designation}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3"><span className="text-sm">{item.employee.department}</span></td>
+                    <td className="p-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Progress value={Math.min(item.utilization, 100)} className="h-2 w-24" />
+                          <span className={`text-sm font-bold ${isOverallocated ? "text-destructive" : "text-foreground"}`}>{item.utilization}%</span>
+                        </div>
+                        {isOverallocated && <p className="text-xs text-destructive">+{item.utilization - 100}% over</p>}
+                      </div>
+                    </td>
+                    <td className="p-3"><span className={`text-sm font-bold ${item.availabilityPercentage === 0 ? "text-chart-4" : "text-chart-3"}`}>{item.availabilityPercentage}%</span></td>
+                    <td className="p-3">
+                      <Badge className={item.availabilityStatus === "Free" ? "bg-chart-3/10 text-chart-3" : item.availabilityStatus === "Fully Allocated" ? "bg-chart-4/10 text-chart-4" : "bg-primary/10 text-primary"}>
+                        {item.availabilityStatus}
                       </Badge>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-3 pt-4 border-t border-border">
-                  <div className="bg-muted/30 p-4 rounded-xl">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <TrendingUp className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                            Utilization
-                          </span>
-                          <span
-                            className={`text-sm font-bold ${isOverallocated ? "text-destructive" : "text-foreground"}`}
-                          >
-                            {item.utilization}%
-                          </span>
+                    </td>
+                    <td className="p-3">
+                      {item.allocations.length > 0 ? (
+                        <div className="space-y-1">
+                          {item.allocations.map((alloc) => (
+                            <div key={alloc.id} className="flex items-center justify-between gap-2 text-xs bg-muted/30 px-2 py-1 rounded">
+                              <span className="truncate max-w-[150px]">{alloc.project?.name}</span>
+                              <Badge variant="outline" className="text-xs">{alloc.allocationPercent}%</Badge>
+                            </div>
+                          ))}
                         </div>
-                      </div>
-                    </div>
-                    <Progress
-                      value={Math.min(item.utilization, 100)}
-                      className="h-2"
-                    />
-                    {isOverallocated && (
-                      <p className="text-xs text-destructive mt-2 font-medium">
-                        Exceeds by {item.utilization - 100}%
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div className="bg-muted/30 p-4 rounded-xl flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
-                      <Target className="h-5 w-5 text-chart-3" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        Availability
-                      </p>
-                      <p
-                        className={`text-lg font-bold ${item.availabilityPercentage === 0 ? "text-chart-4" : item.availabilityPercentage >= 50 ? "text-chart-3" : "text-chart-2"}`}
-                      >
-                        {item.availabilityPercentage}%
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-muted/30 p-4 rounded-xl flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                        Active Projects
-                      </p>
-                      <p className="text-lg font-bold text-foreground">{item.allocations.length}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {item.allocations.length > 0 ? (
-                  <div className="space-y-3 border-t border-border pt-4">
-                    <h4 className="text-sm font-semibold text-foreground">Current Allocations</h4>
-                    {item.allocations.map((alloc) => (
-                      <div
-                        key={alloc.id}
-                        className="flex items-center justify-between rounded-xl bg-muted/30 p-4 border border-border/50 hover:border-primary/50 transition-colors"
-                      >
-                        <div className="flex-1">
-                          <p className="font-semibold text-foreground">{alloc.project?.name}</p>
-                          {alloc.notes && (
-                            <p className="text-xs text-muted-foreground mt-1">{alloc.notes}</p>
-                          )}
-                        </div>
-                        <div className="text-right ml-4">
-                          <p className="font-bold text-2xl text-foreground">{alloc.allocationPercent}%</p>
-                          <Badge variant={alloc.billable ? "default" : "secondary"} className="text-xs mt-2">
-                            {alloc.billable ? "Billable" : "Non-billable"}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="border-t border-border pt-4">
-                    <div className="text-center py-8 bg-muted/30 rounded-xl">
-                      <User className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                      <p className="text-sm text-muted-foreground">No active allocations</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
-          )
-        })}
-      </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No allocations</span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
       {filteredAllocations.length === 0 && (
-        <Card className="border-border bg-card p-12 text-center card-hover">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-              <Search className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground mb-1">No allocations found</p>
-              <p className="text-sm text-muted-foreground">Try adjusting your search or filter criteria</p>
-            </div>
-          </div>
+        <Card className="p-12 text-center">
+          <Search className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+          <p className="text-muted-foreground">No allocations found</p>
         </Card>
       )}
     </div>
