@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search, Sun, Moon } from "lucide-react"
+import { Bell, Search, Sun, Moon, Sparkles } from "lucide-react"
 import { useTheme } from "next-themes"
 import { RoleSelector } from "@/components/layout/role-selector"
 import { Button } from "@/components/ui/button"
@@ -16,16 +16,16 @@ export function Header() {
   }, [])
 
   return (
-    <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40">
+    <header className="h-16 border-b border-border/40 glass sticky top-0 z-40 shadow-sm">
       <div className="h-full px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* Search - Left */}
         <div className="flex-1 max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               type="search"
               placeholder="Search employees, projects..."
-              className="pl-10 bg-muted/50 border-border focus-visible:ring-ring"
+              className="pl-10 bg-muted/30 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-200 rounded-xl"
             />
           </div>
         </div>
@@ -43,13 +43,13 @@ export function Header() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full hover:bg-accent"
+              className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-200 group"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
-                <Sun className="w-5 h-5 text-foreground" />
+                <Sun className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
               ) : (
-                <Moon className="w-5 h-5 text-foreground" />
+                <Moon className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
               )}
             </Button>
           )}
@@ -58,11 +58,11 @@ export function Header() {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="rounded-full relative hover:bg-accent"
+            className="rounded-xl relative hover:bg-primary/10 hover:text-primary transition-all duration-200 group"
             aria-label="Notifications"
           >
-            <Bell className="w-5 h-5 text-foreground" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+            <Bell className="w-5 h-5 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full animate-pulse" />
           </Button>
         </div>
       </div>
