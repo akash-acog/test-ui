@@ -1,11 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Users, Briefcase, TrendingUp, AlertTriangle, Plus, Calendar, Target, Star, UserPlus, Clock } from "lucide-react"
 import { mockEmployees, mockProjects, mockAllocations, calculateEmployeeUtilization } from "@/lib/mock-data"
+import { AddProjectForm } from "@/components/forms/add-project-form"
 
 interface ManagerDashboardPageProps {
   onNavigate?: (page: string) => void
@@ -14,6 +17,8 @@ interface ManagerDashboardPageProps {
 }
 
 export function ManagerDashboardPage({ onNavigate, onViewEmployee, managerId = "1" }: ManagerDashboardPageProps) {
+  const [showAddProject, setShowAddProject] = useState(false)
+
   // Get manager's projects
   const myProjects = mockProjects.filter((p) => p.manager === managerId)
   const activeProjects = myProjects.filter((p) => p.status === "Active")
@@ -53,6 +58,15 @@ export function ManagerDashboardPage({ onNavigate, onViewEmployee, managerId = "
   // For demo, assuming 3 pending ratings
   const pendingRatings = 3
 
+  const handleProjectSubmit = (data: any) => {
+    console.log("Creating new project:", data)
+    // TODO: Call API to create project
+    // POST /api/projects
+    setShowAddProject(false)
+    // TODO: Show success toast
+    // TODO: Refresh projects list
+  }
+
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header with Quick Actions */}
@@ -62,7 +76,7 @@ export function ManagerDashboardPage({ onNavigate, onViewEmployee, managerId = "
           <p className="mt-2 text-sm text-muted-foreground">Project management and resource allocation oversight</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => onNavigate?.("projects")} className="gap-2 bg-gradient-primary text-white border-0">
+          <Button onClick={() => setShowAddProject(true)} className="gap-2 bg-gradient-primary text-white border-0">
             <Plus className="h-4 w-4" />
             New Project
           </Button>
@@ -352,7 +366,7 @@ export function ManagerDashboardPage({ onNavigate, onViewEmployee, managerId = "
       <Card className="border-border/50 p-6 card-hover bg-gradient-to-br from-primary/5 to-transparent">
         <h2 className="text-xl font-bold text-foreground mb-4">Quick Actions</h2>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
-          <Button variant="outline" className="justify-start" onClick={() => onNavigate?.("projects")}>
+          <Button variant="outline" className="justify-start" onClick={() => setShowAddProject(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Create Project
           </Button>
@@ -374,6 +388,19 @@ export function ManagerDashboardPage({ onNavigate, onViewEmployee, managerId = "
           </Button>
         </div>
       </Card>
+
+      {/* Add Project Dialog */}
+      <Dialog open={showAddProject} onOpenChange={setShowAddProject}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+          </DialogHeader>
+          <AddProjectForm
+            onSubmit={handleProjectSubmit}
+            onCancel={() => setShowAddProject(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
