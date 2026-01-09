@@ -1,110 +1,98 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Briefcase, CheckSquare, User } from "lucide-react"
-import { mockEmployees } from "@/lib/mock-data"
+import { Briefcase, Calendar, TrendingUp, Award } from "lucide-react"
+import { mockEmployees, mockProjects } from "@/lib/mock-data"
 
 interface EmployeeDashboardPageProps {
   currentUserId: string
 }
 
 export function EmployeeDashboardPage({ currentUserId }: EmployeeDashboardPageProps) {
-  const currentEmployee = mockEmployees[0] // Alex Chen
+  const currentEmployee = mockEmployees.find((emp) => emp.id === currentUserId)
+  const myProjects = mockProjects.filter((proj) => 
+    proj.team?.some((member) => member.id === currentUserId)
+  )
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground">Welcome, {currentEmployee.name}</h1>
-        <p className="text-muted-foreground">Your personal dashboard and quick access</p>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-4xl font-bold text-foreground">My Dashboard</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Welcome back, {currentEmployee?.name}</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        <Card className="p-6">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="p-6 bg-card border-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Active Projects</p>
-              <p className="text-2xl font-bold">3</p>
+              <p className="text-3xl font-bold text-foreground">{myProjects.length}</p>
             </div>
-            <Briefcase className="h-8 w-8 text-purple-600" />
+            <Briefcase className="h-8 w-8 text-primary" />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Assigned to you</p>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-card border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Pending Tasks</p>
-              <p className="text-2xl font-bold">7</p>
+              <p className="text-sm text-muted-foreground">My Allocation</p>
+              <p className="text-3xl font-bold text-foreground">{currentEmployee?.allocation}%</p>
             </div>
-            <CheckSquare className="h-8 w-8 text-blue-600" />
+            <TrendingUp className="h-8 w-8 text-chart-2" />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">In your checklist</p>
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 bg-card border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Skills</p>
-              <p className="text-2xl font-bold">8</p>
+              <p className="text-sm text-muted-foreground">Upcoming Events</p>
+              <p className="text-3xl font-bold text-foreground">2</p>
             </div>
-            <User className="h-8 w-8 text-green-600" />
+            <Calendar className="h-8 w-8 text-chart-3" />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Listed in profile</p>
+        </Card>
+
+        <Card className="p-6 bg-card border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Performance</p>
+              <p className="text-3xl font-bold text-foreground">A+</p>
+            </div>
+            <Award className="h-8 w-8 text-chart-4" />
+          </div>
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">My Projects</h2>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="p-6 bg-card border-border">
+          <h2 className="text-xl font-bold text-foreground mb-4">My Projects</h2>
           <div className="space-y-3">
-            {[
-              { name: "Mobile App Redesign", role: "Frontend Dev", progress: 65 },
-              { name: "API Integration", role: "Backend Dev", progress: 80 },
-              { name: "Dashboard v2", role: "Full Stack", progress: 45 },
-            ].map((proj) => (
-              <div key={proj.name} className="p-3 border border-border rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">{proj.name}</span>
+            {myProjects.slice(0, 5).map((project) => (
+              <div key={project.id} className="p-3 rounded-lg hover:bg-accent transition-colors">
+                <div className="flex justify-between items-start mb-2">
+                  <p className="font-medium text-foreground">{project.name}</p>
+                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                    {project.status}
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mb-2">{proj.role}</p>
-                <div className="w-full bg-muted rounded-full h-1.5">
-                  <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${proj.progress}%` }}></div>
-                </div>
+                <p className="text-xs text-muted-foreground">{project.description}</p>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-          <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-start bg-transparent">
-              View Profile
-            </Button>
-            <Button variant="outline" className="w-full justify-start bg-transparent">
-              My Checklist
-            </Button>
-            <Button variant="outline" className="w-full justify-start bg-transparent">
-              View Projects
-            </Button>
-            <Button variant="outline" className="w-full justify-start bg-transparent">
-              Team Members
-            </Button>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-          <div className="space-y-3 text-sm">
-            {[
-              { action: "Project assigned", time: "Today" },
-              { action: "Task completed", time: "Yesterday" },
-              { action: "Profile updated", time: "2 days ago" },
-            ].map((item) => (
-              <div key={item.action} className="pb-3 border-b last:border-b-0">
-                <p className="font-medium">{item.action}</p>
-                <p className="text-xs text-muted-foreground">{item.time}</p>
+        <Card className="p-6 bg-card border-border">
+          <h2 className="text-xl font-bold text-foreground mb-4">My Skills</h2>
+          <div className="space-y-3">
+            {currentEmployee?.skills.slice(0, 5).map((skill, idx) => (
+              <div key={idx}>
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium text-foreground">{skill}</span>
+                  <span className="text-sm text-muted-foreground">Expert</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: "85%" }}></div>
+                </div>
               </div>
             ))}
           </div>
