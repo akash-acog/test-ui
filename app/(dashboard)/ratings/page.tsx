@@ -2,6 +2,6 @@
 
 import { PerformanceRatingsPage } from "@/components/pages/performance-ratings-page"
 
-export default function RatingsPage() {
+export default function Page() {
   return <PerformanceRatingsPage />
 }

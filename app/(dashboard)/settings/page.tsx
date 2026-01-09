@@ -2,6 +2,6 @@
 
 import { SettingsPage } from "@/components/pages/settings-page"
 
-export default function SettingsPageRoute() {
+export default function Page() {
   return <SettingsPage />
 }

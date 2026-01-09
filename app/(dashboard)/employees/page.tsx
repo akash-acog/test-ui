@@ -1,18 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useRole } from "@/lib/role-context"
 import { EmployeeListPage } from "@/components/pages/employee-list-page"
+import { useRouter } from "next/navigation"
 
-export default function EmployeesPage() {
+export default function Page() {
   const router = useRouter()
-  const { user } = useRole()
-
-  if (!user) return null
-
-  const handleViewEmployee = (id: string) => {
-    router.push(`/employees/${id}`)
-  }
-
-  return <EmployeeListPage onViewEmployee={handleViewEmployee} userRole={user.role} />
+  return <EmployeeListPage onViewEmployee={(id) => router.push(`/employees/${id}`)} />
 }

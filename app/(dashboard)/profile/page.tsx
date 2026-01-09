@@ -3,8 +3,7 @@
 import { ProfilePage } from "@/components/pages/profile-page"
 import { useRole } from "@/lib/role-context"
 
-export default function ProfilePageRoute() {
+export default function Page() {
   const { user } = useRole()
-  if (!user) return null
-  return <ProfilePage currentUserId={user.id} />
+  return <ProfilePage userRole={user?.role || "employee"} currentUserId={user?.id || "1"} />
 }
