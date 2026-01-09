@@ -1,10 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Users, Briefcase, Activity, Settings, UserPlus, FolderPlus, TrendingUp, Clock, CheckCircle, AlertCircle } from "lucide-react"
 import { mockEmployees, mockProjects, mockAllocations, calculateEmployeeUtilization } from "@/lib/mock-data"
+import { AddEmployeeForm } from "@/components/forms/add-employee-form"
+import { AddProjectForm } from "@/components/forms/add-project-form"
 
 interface AdminDashboardPageProps {
   onNavigate?: (page: string) => void
@@ -12,6 +16,9 @@ interface AdminDashboardPageProps {
 }
 
 export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboardPageProps) {
+  const [showAddEmployee, setShowAddEmployee] = useState(false)
+  const [showAddProject, setShowAddProject] = useState(false)
+
   // Calculate stats
   const activeEmployees = mockEmployees.filter((emp) => emp.status === "Active").length
   const totalEmployees = mockEmployees.length
@@ -49,9 +56,25 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
     .slice(0, 3)
 
   const recentProjects = mockProjects
-    .filter((p) => p.status === "Completed" && new Date(p.endDate) >= sevenDaysAgo)
-    .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+    .filter((p) => p.status === "Completed" && p.endDate && new Date(p.endDate) >= sevenDaysAgo)
+    .sort((a, b) => new Date(b.endDate!).getTime() - new Date(a.endDate!).getTime())
     .slice(0, 3)
+
+  const handleEmployeeSubmit = (data: any) => {
+    console.log("Creating new employee:", data)
+    // TODO: Call API - POST /api/employees
+    setShowAddEmployee(false)
+    // TODO: Show success toast
+    // TODO: Refresh employee list
+  }
+
+  const handleProjectSubmit = (data: any) => {
+    console.log("Creating new project:", data)
+    // TODO: Call API - POST /api/projects
+    setShowAddProject(false)
+    // TODO: Show success toast
+    // TODO: Refresh project list
+  }
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -62,11 +85,11 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
           <p className="mt-2 text-sm text-muted-foreground">System overview and quick access to management functions</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => onNavigate?.("employees")} className="gap-2 bg-gradient-primary text-white border-0">
+          <Button onClick={() => setShowAddEmployee(true)} className="gap-2 bg-gradient-primary text-white border-0">
             <UserPlus className="h-4 w-4" />
             Add Employee
           </Button>
-          <Button onClick={() => onNavigate?.("projects")} variant="outline" className="gap-2">
+          <Button onClick={() => setShowAddProject(true)} variant="outline" className="gap-2">
             <FolderPlus className="h-4 w-4" />
             Add Project
           </Button>
@@ -75,7 +98,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
 
       {/* Key Metrics - Total Employees & Projects */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-border/50 bg-gradient-to-br from-primary/10 to-primary/5 p-6 card-hover">
+        <Card className="border-border/50 bg-gradient-to-br from-primary/10 to-primary/5 p-6 card-hover cursor-pointer" onClick={() => onNavigate?.("employees")}>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Employees</p>
@@ -88,7 +111,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
           </div>
         </Card>
 
-        <Card className="border-border/50 bg-gradient-to-br from-chart-3/10 to-chart-3/5 p-6 card-hover">
+        <Card className="border-border/50 bg-gradient-to-br from-chart-3/10 to-chart-3/5 p-6 card-hover cursor-pointer" onClick={() => onNavigate?.("projects")}>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Active Projects</p>
@@ -105,7 +128,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
           </div>
         </Card>
 
-        <Card className="border-border/50 bg-gradient-to-br from-chart-4/10 to-chart-4/5 p-6 card-hover">
+        <Card className="border-border/50 bg-gradient-to-br from-chart-4/10 to-chart-4/5 p-6 card-hover cursor-pointer" onClick={() => onNavigate?.("projects")}>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
               <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Total Projects</p>
@@ -144,7 +167,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
           Allocation Overview
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
-          <Card className="border-border/50 p-6 card-hover bg-chart-3/5">
+          <Card className="border-border/50 p-6 card-hover bg-chart-3/5 cursor-pointer" onClick={() => onNavigate?.("allocations")}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-muted-foreground">Free (0% Utilization)</p>
@@ -155,7 +178,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
             </div>
           </Card>
 
-          <Card className="border-border/50 p-6 card-hover bg-primary/5">
+          <Card className="border-border/50 p-6 card-hover bg-primary/5 cursor-pointer" onClick={() => onNavigate?.("allocations")}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-muted-foreground">Partially Allocated</p>
@@ -166,7 +189,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
             </div>
           </Card>
 
-          <Card className="border-border/50 p-6 card-hover bg-chart-4/5">
+          <Card className="border-border/50 p-6 card-hover bg-chart-4/5 cursor-pointer" onClick={() => onNavigate?.("allocations")}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-muted-foreground">Fully Allocated</p>
@@ -190,10 +213,10 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => onNavigate?.("settings")}
+              onClick={() => setShowAddEmployee(true)}
             >
               <UserPlus className="h-4 w-4 mr-2" />
-              Create New User
+              Add New Employee
             </Button>
             <Button
               variant="outline"
@@ -216,33 +239,33 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
 
         <Card className="border-border/50 p-6 card-hover">
           <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <Settings className="h-5 w-5 text-primary" />
-            System Configuration
+            <Briefcase className="h-5 w-5 text-primary" />
+            Project Management
           </h3>
           <div className="space-y-3">
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => onNavigate?.("settings")}
+              onClick={() => setShowAddProject(true)}
             >
-              <Settings className="h-4 w-4 mr-2" />
-              Manage Departments
+              <FolderPlus className="h-4 w-4 mr-2" />
+              Create New Project
             </Button>
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => onNavigate?.("settings")}
+              onClick={() => onNavigate?.("projects")}
             >
-              <Settings className="h-4 w-4 mr-2" />
-              Manage Skills Taxonomy
+              <Briefcase className="h-4 w-4 mr-2" />
+              View All Projects
             </Button>
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => onNavigate?.("settings")}
+              onClick={() => onNavigate?.("allocations")}
             >
-              <Settings className="h-4 w-4 mr-2" />
-              Manage Office Locations
+              <Activity className="h-4 w-4 mr-2" />
+              Manage Allocations
             </Button>
           </div>
         </Card>
@@ -342,7 +365,8 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
                 {recentProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                    onClick={() => onNavigate?.("projects")}
                   >
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-lg bg-chart-4/10 flex items-center justify-center flex-shrink-0">
@@ -354,7 +378,7 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
                       </div>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(project.endDate).toLocaleDateString()}
+                      {project.endDate && new Date(project.endDate).toLocaleDateString()}
                     </span>
                   </div>
                 ))}
@@ -367,6 +391,32 @@ export function AdminDashboardPage({ onNavigate, onViewEmployee }: AdminDashboar
           )}
         </div>
       </Card>
+
+      {/* Add Employee Dialog */}
+      <Dialog open={showAddEmployee} onOpenChange={setShowAddEmployee}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Employee</DialogTitle>
+          </DialogHeader>
+          <AddEmployeeForm
+            onSubmit={handleEmployeeSubmit}
+            onCancel={() => setShowAddEmployee(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Project Dialog */}
+      <Dialog open={showAddProject} onOpenChange={setShowAddProject}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+          </DialogHeader>
+          <AddProjectForm
+            onSubmit={handleProjectSubmit}
+            onCancel={() => setShowAddProject(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
