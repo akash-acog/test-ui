@@ -1,6 +1,7 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 import { useRole } from "@/lib/role-context"
 import { canAccessPage } from "@/lib/role-config"
 import {
@@ -18,15 +19,15 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { memo } from "react"
 
 interface SidebarProps {
   collapsed: boolean
   onToggle: () => void
 }
 
-export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export const Sidebar = memo(function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const { user } = useRole()
 
   if (!user) return null
@@ -84,9 +85,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           {filteredNavigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
             return (
-              <button
+              <Link
                 key={item.name}
-                onClick={() => router.push(item.href)}
+                href={item.href}
+                prefetch={true}
                 className={cn(
                   "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
                   isActive
@@ -101,7 +103,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   )}
                 />
                 {!collapsed && <span className="font-medium truncate">{item.name}</span>}
-              </button>
+              </Link>
             )
           })}
         </div>
@@ -111,7 +113,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {!collapsed && (
         <div className="p-4 border-t border-slate-200 dark:border-slate-800">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white font-semibold text-sm">{user.name.substring(0, 2).toUpperCase()}</span>
             </div>
             <div className="flex-1 min-w-0">
@@ -123,4 +125,4 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
     </div>
   )
-}
+})
