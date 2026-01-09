@@ -16,7 +16,7 @@ export function Header() {
   }, [])
 
   return (
-    <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-40">
+    <header className="h-16 border-b border-slate-200 dark:border-slate-800 glass sticky top-0 z-40">
       <div className="h-full px-6 lg:px-8 flex items-center justify-between">
         {/* Search */}
         <div className="flex-1 max-w-md">
