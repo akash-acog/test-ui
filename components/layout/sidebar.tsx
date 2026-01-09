@@ -80,7 +80,7 @@ export const Sidebar = memo(function Sidebar({ collapsed, onToggle }: SidebarPro
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2">
+      <nav className="flex-1 overflow-y-auto scrollbar-thin py-4 px-2">
         <div className="space-y-1">
           {filteredNavigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
