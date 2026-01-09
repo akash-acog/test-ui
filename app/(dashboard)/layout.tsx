@@ -33,16 +33,16 @@ export default function DashboardLayout({
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-gradient-muted">
       <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className={`transition-all duration-300 ${sidebarCollapsed ? "ml-16" : "ml-64"}`}>
         <Header />
-        <main className="p-6 lg:p-8">
+        <main className="p-6 lg:p-8 animate-fade-in">
           <div className="max-w-7xl mx-auto">
             <Suspense fallback={
               <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
-                <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                <div className="h-8 w-48 bg-muted rounded"></div>
+                <div className="h-64 bg-muted rounded"></div>
               </div>
             }>
               {children}
