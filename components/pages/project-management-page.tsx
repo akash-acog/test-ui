@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Edit2, Trash2, TrendingUp, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Search, Edit2, Trash2, TrendingUp, ChevronDown, ChevronUp, Users, Calendar, DollarSign, Target, Layers } from "lucide-react"
 import { useRole } from "@/lib/role-context"
 import { hasPermission } from "@/lib/role-config"
 import { getProjectsByRole, getEmployeeById, mockEmployees } from "@/lib/mock-data"
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
 
 interface ProjectManagementPageProps {
   onViewEmployee?: (id: string, from: string) => void
@@ -28,31 +29,38 @@ interface ProjectManagementPageProps {
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    Active: "bg-chart-3/10 text-chart-3 dark:bg-chart-3/20",
-    Planned: "bg-primary/10 text-primary dark:bg-primary/20",
-    Completed: "bg-muted text-muted-foreground",
+    Active: "bg-chart-3/10 text-chart-3 border-chart-3/20",
+    Planned: "bg-primary/10 text-primary border-primary/20",
+    Completed: "bg-muted text-muted-foreground border-muted-foreground/20",
   }
   return colors[status] || "bg-muted text-muted-foreground"
 }
 
 const getPriorityColor = (priority: string) => {
   const colors: Record<string, string> = {
-    Critical: "bg-destructive/10 text-destructive dark:bg-destructive/20",
-    High: "bg-chart-1/10 text-chart-1 dark:bg-chart-1/20",
-    Medium: "bg-chart-4/10 text-chart-4 dark:bg-chart-4/20",
-    Low: "bg-primary/10 text-primary dark:bg-primary/20",
+    Critical: "bg-destructive/10 text-destructive border-destructive/20",
+    High: "bg-chart-1/10 text-chart-1 border-chart-1/20",
+    Medium: "bg-chart-4/10 text-chart-4 border-chart-4/20",
+    Low: "bg-primary/10 text-primary border-primary/20",
   }
   return colors[priority] || "bg-muted text-muted-foreground"
 }
 
 const getProficiencyColor = (proficiency: string) => {
   const colors: Record<string, string> = {
-    Expert: "bg-chart-3/10 text-chart-3 dark:bg-chart-3/20",
-    Advanced: "bg-primary/10 text-primary dark:bg-primary/20",
-    Intermediate: "bg-chart-4/10 text-chart-4 dark:bg-chart-4/20",
-    Beginner: "bg-muted text-muted-foreground",
+    Expert: "bg-chart-3/10 text-chart-3 border-chart-3/20",
+    Advanced: "bg-primary/10 text-primary border-primary/20",
+    Intermediate: "bg-chart-4/10 text-chart-4 border-chart-4/20",
+    Beginner: "bg-muted text-muted-foreground border-muted-foreground/20",
   }
   return colors[proficiency] || "bg-muted text-muted-foreground"
+}
+
+// Project type icons and gradients
+const projectTypeConfig: Record<string, { icon: any; gradient: string }> = {
+  Billable: { icon: DollarSign, gradient: "from-green-500 to-emerald-600" },
+  "Non-billable": { icon: Target, gradient: "from-blue-500 to-cyan-600" },
+  Internal: { icon: Layers, gradient: "from-purple-500 to-fuchsia-600" },
 }
 
 export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManagementPageProps) {
@@ -113,10 +121,10 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-foreground">Projects</h1>
+          <h1 className="text-4xl font-bold text-gradient">Projects</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {user?.role === "employee" ? "Your assigned projects" : "Manage all projects and resources"}
           </p>
@@ -124,7 +132,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
         {canAdd && (
           <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-primary text-primary-foreground shadow-lg">
+              <Button className="gap-2 bg-gradient-primary text-white shadow-lg hover:shadow-xl transition-all border-0">
                 <Plus className="h-4 w-4" />
                 New Project
               </Button>
@@ -143,7 +151,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="e.g., Mobile App Development"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="bg-muted/50 border-border"
+                      className="bg-muted/30 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -153,7 +161,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="e.g., PROJ-001"
                       value={formData.code}
                       onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                      className="bg-muted/50 border-border"
+                      className="bg-muted/30 border-border"
                     />
                   </div>
                 </div>
@@ -165,7 +173,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                     placeholder="Project description and objectives"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="min-h-24 bg-muted/50 border-border"
+                    className="min-h-24 bg-muted/30 border-border"
                   />
                 </div>
 
@@ -173,7 +181,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Status</Label>
                     <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
-                      <SelectTrigger className="bg-muted/50 border-border">
+                      <SelectTrigger className="bg-muted/30 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -186,7 +194,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Priority</Label>
                     <Select value={formData.priority} onValueChange={(v) => setFormData({ ...formData, priority: v })}>
-                      <SelectTrigger className="bg-muted/50 border-border">
+                      <SelectTrigger className="bg-muted/30 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -203,7 +211,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Project Type</Label>
                     <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
-                      <SelectTrigger className="bg-muted/50 border-border">
+                      <SelectTrigger className="bg-muted/30 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -216,7 +224,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Project Manager</Label>
                     <Select value={formData.manager} onValueChange={(v) => setFormData({ ...formData, manager: v })}>
-                      <SelectTrigger className="bg-muted/50 border-border">
+                      <SelectTrigger className="bg-muted/30 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -239,7 +247,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="100000"
                       value={formData.budget}
                       onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                      className="bg-muted/50 border-border"
+                      className="bg-muted/30 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -250,7 +258,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="5"
                       value={formData.teamSize}
                       onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
-                      className="bg-muted/50 border-border"
+                      className="bg-muted/30 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -260,7 +268,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="bg-muted/50 border-border"
+                      className="bg-muted/30 border-border"
                     />
                   </div>
                 </div>
@@ -272,7 +280,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="bg-muted/50 border-border"
+                    className="bg-muted/30 border-border"
                   />
                 </div>
 
@@ -280,7 +288,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <Button variant="outline" onClick={() => setIsAddProjectOpen(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={handleAddProject} className="bg-primary text-primary-foreground">
+                  <Button onClick={handleAddProject} className="bg-gradient-primary text-white border-0">
                     Create Project
                   </Button>
                 </div>
@@ -290,9 +298,10 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
         )}
       </div>
 
-      <Card className="border-border bg-card p-6">
+      <Card className="border-border bg-card p-6 card-hover">
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide flex items-center gap-2">
+            <Search className="h-4 w-4 text-primary" />
             Search & Filter
           </h3>
           <div className="grid gap-3 md:grid-cols-5">
@@ -303,13 +312,13 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   placeholder="Search by name, code, or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-muted/50 border-border"
+                  className="pl-9 bg-muted/30 border-border focus:border-primary transition-colors"
                 />
               </div>
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-muted/50 border-border">
+              <SelectTrigger className="bg-muted/30 border-border">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -321,7 +330,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
             </Select>
 
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="bg-muted/50 border-border">
+              <SelectTrigger className="bg-muted/30 border-border">
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
@@ -334,7 +343,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
             </Select>
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-muted/50 border-border">
+              <SelectTrigger className="bg-muted/30 border-border">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -352,36 +361,53 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
         {filteredProjects.map((project) => {
           const manager = getEmployeeById(project.manager)
           const isExpanded = expandedProject === project.id
+          const typeConfig = projectTypeConfig[project.type] || projectTypeConfig.Billable
+          const TypeIcon = typeConfig.icon
+          const budgetUsed = Math.round((project.spent / project.budget) * 100)
 
           return (
             <Card
               key={project.id}
-              className="border-border bg-card p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="border-border bg-card overflow-hidden card-hover group relative"
             >
-              <div className="space-y-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              {/* Gradient accent bar */}
+              <div className={`h-2 bg-gradient-to-r ${typeConfig.gradient}`} />
+              
+              <div className="p-6 space-y-4">
+                <div className="flex items-start gap-4">
+                  {/* Project Type Icon */}
+                  <div className="relative flex-shrink-0">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${typeConfig.gradient} rounded-xl opacity-20 blur-xl group-hover:opacity-30 transition-opacity`} />
+                    <div className={`relative h-14 w-14 rounded-xl bg-gradient-to-br ${typeConfig.gradient} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+                      <TypeIcon className="h-7 w-7 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Project Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide font-mono bg-muted/50 px-2 py-0.5 rounded">
                         {project.code}
                       </span>
                       <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
                       <Badge className={getPriorityColor(project.priority)}>{project.priority}</Badge>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border">
                         {project.type}
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
+                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{project.name}</h3>
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                       {project.description}
                     </p>
                   </div>
+
+                  {/* Edit/Delete Actions */}
                   {canEdit && (
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 flex-shrink-0">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground hover:bg-primary/10"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -389,7 +415,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground hover:text-destructive"
+                          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -398,53 +424,80 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   )}
                 </div>
 
+                {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-4 pt-4 border-t border-border">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium">Project Manager</p>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      onClick={() => onViewEmployee?.(project.manager, "projects")}
-                      className="text-primary p-0 h-auto mt-1 font-semibold"
-                    >
-                      {manager?.name || "Unknown"}
-                    </Button>
+                  <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-xl">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground font-medium">Manager</p>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={() => onViewEmployee?.(project.manager, "projects")}
+                        className="text-primary p-0 h-auto font-semibold truncate max-w-full text-sm"
+                      >
+                        {manager?.name || "Unknown"}
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium">Timeline</p>
-                    <p className="text-sm font-semibold text-foreground mt-1">
-                      {new Date(project.startDate).toLocaleDateString()} -{" "}
-                      {project.endDate ? new Date(project.endDate).toLocaleDateString() : "Ongoing"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium">Team Size</p>
-                    <p className="text-sm font-semibold text-foreground mt-1">
-                      {project.teamSize} members
-                    </p>
-                  </div>
-                  {canEdit && (
-                    <div>
-                      <p className="text-xs text-muted-foreground font-medium">Budget</p>
-                      <p className="text-sm font-semibold text-foreground mt-1">
-                        ${project.budget.toLocaleString()}
+
+                  <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-xl">
+                    <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="h-5 w-5 text-chart-3" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground font-medium">Timeline</p>
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {new Date(project.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                       </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-xl">
+                    <div className="h-10 w-10 rounded-lg bg-chart-4/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="h-5 w-5 text-chart-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground font-medium">Team Size</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {project.teamSize} members
+                      </p>
+                    </div>
+                  </div>
+
+                  {canEdit && (
+                    <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-xl">
+                      <div className="h-10 w-10 rounded-lg bg-chart-3/10 flex items-center justify-center flex-shrink-0">
+                        <DollarSign className="h-5 w-5 text-chart-3" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground font-medium">Budget Used</p>
+                        <p className="text-sm font-semibold text-foreground">
+                          {budgetUsed}% • ${(project.spent/1000).toFixed(0)}K
+                        </p>
+                        <Progress value={budgetUsed} className="h-1 mt-1" />
+                      </div>
                     </div>
                   )}
                 </div>
 
+                {/* Required Skills Section */}
                 {project.requiredSkills && project.requiredSkills.length > 0 && (
                   <div className="pt-4 border-t border-border">
                     <button
                       onClick={() => setExpandedProject(isExpanded ? null : project.id)}
-                      className="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                      className="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors w-full justify-between"
                     >
-                      <TrendingUp className="h-4 w-4" />
-                      Required Skills ({project.requiredSkills.length})
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
+                        Required Skills ({project.requiredSkills.length})
+                      </div>
                       {isExpanded ? (
-                        <ChevronUp className="h-4 w-4 ml-auto" />
+                        <ChevronUp className="h-4 w-4" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 ml-auto" />
+                        <ChevronDown className="h-4 w-4" />
                       )}
                     </button>
 
@@ -453,7 +506,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                         {project.requiredSkills.map((skill, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                            className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border/50"
                           >
                             <p className="font-medium text-foreground">{skill.name}</p>
                             <Badge className={getProficiencyColor(skill.proficiency)}>{skill.proficiency}</Badge>
@@ -470,8 +523,16 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
       </div>
 
       {filteredProjects.length === 0 && (
-        <Card className="border-border bg-card p-12 text-center">
-          <p className="text-muted-foreground">No projects found matching your filters</p>
+        <Card className="border-border bg-card p-12 text-center card-hover">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground mb-1">No projects found</p>
+              <p className="text-sm text-muted-foreground">Try adjusting your search or filter criteria</p>
+            </div>
+          </div>
         </Card>
       )}
     </div>
