@@ -28,31 +28,31 @@ interface ProjectManagementPageProps {
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    Active: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-    Planned: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-    Completed: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300",
+    Active: "bg-chart-3/10 text-chart-3 dark:bg-chart-3/20",
+    Planned: "bg-primary/10 text-primary dark:bg-primary/20",
+    Completed: "bg-muted text-muted-foreground",
   }
-  return colors[status] || "bg-slate-100 text-slate-800"
+  return colors[status] || "bg-muted text-muted-foreground"
 }
 
 const getPriorityColor = (priority: string) => {
   const colors: Record<string, string> = {
-    Critical: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-    High: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-    Medium: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-    Low: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+    Critical: "bg-destructive/10 text-destructive dark:bg-destructive/20",
+    High: "bg-chart-1/10 text-chart-1 dark:bg-chart-1/20",
+    Medium: "bg-chart-4/10 text-chart-4 dark:bg-chart-4/20",
+    Low: "bg-primary/10 text-primary dark:bg-primary/20",
   }
-  return colors[priority] || "bg-slate-100 text-slate-800"
+  return colors[priority] || "bg-muted text-muted-foreground"
 }
 
 const getProficiencyColor = (proficiency: string) => {
   const colors: Record<string, string> = {
-    Expert: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-    Advanced: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-    Intermediate: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-    Beginner: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300",
+    Expert: "bg-chart-3/10 text-chart-3 dark:bg-chart-3/20",
+    Advanced: "bg-primary/10 text-primary dark:bg-primary/20",
+    Intermediate: "bg-chart-4/10 text-chart-4 dark:bg-chart-4/20",
+    Beginner: "bg-muted text-muted-foreground",
   }
-  return colors[proficiency] || "bg-slate-100 text-slate-800"
+  return colors[proficiency] || "bg-muted text-muted-foreground"
 }
 
 export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManagementPageProps) {
@@ -116,15 +116,15 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Projects</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <h1 className="text-4xl font-bold text-foreground">Projects</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             {user?.role === "employee" ? "Your assigned projects" : "Manage all projects and resources"}
           </p>
         </div>
         {canAdd && (
           <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-gradient-to-r from-primary to-accent text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+              <Button className="gap-2 bg-primary text-primary-foreground shadow-lg">
                 <Plus className="h-4 w-4" />
                 New Project
               </Button>
@@ -143,7 +143,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="e.g., Mobile App Development"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -153,7 +153,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="e.g., PROJ-001"
                       value={formData.code}
                       onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                     placeholder="Project description and objectives"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="min-h-24 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    className="min-h-24 bg-muted/50 border-border"
                   />
                 </div>
 
@@ -173,7 +173,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Status</Label>
                     <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -186,7 +186,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Priority</Label>
                     <Select value={formData.priority} onValueChange={(v) => setFormData({ ...formData, priority: v })}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -203,7 +203,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Project Type</Label>
                     <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -216,7 +216,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   <div className="space-y-2">
                     <Label>Project Manager</Label>
                     <Select value={formData.manager} onValueChange={(v) => setFormData({ ...formData, manager: v })}>
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -239,7 +239,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="100000"
                       value={formData.budget}
                       onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -250,7 +250,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       placeholder="5"
                       value={formData.teamSize}
                       onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -260,7 +260,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                 </div>
@@ -272,15 +272,15 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    className="bg-muted/50 border-border"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex justify-end gap-2 pt-4 border-t border-border">
                   <Button variant="outline" onClick={() => setIsAddProjectOpen(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={handleAddProject} className="bg-gradient-to-r from-primary to-accent text-white">
+                  <Button onClick={handleAddProject} className="bg-primary text-primary-foreground">
                     Create Project
                   </Button>
                 </div>
@@ -290,26 +290,26 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
         )}
       </div>
 
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <Card className="border-border bg-card p-6">
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
             Search & Filter
           </h3>
           <div className="grid gap-3 md:grid-cols-5">
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by name, code, or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
+                  className="pl-9 bg-muted/50 border-border"
                 />
               </div>
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -321,7 +321,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
             </Select>
 
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
@@ -334,7 +334,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
             </Select>
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -356,13 +356,13 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
           return (
             <Card
               key={project.id}
-              className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="border-border bg-card p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                         {project.code}
                       </span>
                       <Badge className={getStatusColor(project.status)}>{project.status}</Badge>
@@ -371,8 +371,8 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                         {project.type}
                       </Badge>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">{project.name}</h3>
-                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                    <h3 className="text-xl font-bold text-foreground">{project.name}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                       {project.description}
                     </p>
                   </div>
@@ -381,7 +381,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                        className="text-muted-foreground hover:text-foreground"
                       >
                         <Edit2 className="h-4 w-4" />
                       </Button>
@@ -389,7 +389,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-slate-500 hover:text-red-600 dark:hover:text-red-400"
+                          className="text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -398,9 +398,9 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                   )}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <div className="grid gap-4 md:grid-cols-4 pt-4 border-t border-border">
                   <div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Project Manager</p>
+                    <p className="text-xs text-muted-foreground font-medium">Project Manager</p>
                     <Button
                       variant="link"
                       size="sm"
@@ -411,22 +411,22 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                     </Button>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Timeline</p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
+                    <p className="text-xs text-muted-foreground font-medium">Timeline</p>
+                    <p className="text-sm font-semibold text-foreground mt-1">
                       {new Date(project.startDate).toLocaleDateString()} -{" "}
                       {project.endDate ? new Date(project.endDate).toLocaleDateString() : "Ongoing"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Team Size</p>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
+                    <p className="text-xs text-muted-foreground font-medium">Team Size</p>
+                    <p className="text-sm font-semibold text-foreground mt-1">
                       {project.teamSize} members
                     </p>
                   </div>
                   {canEdit && (
                     <div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Budget</p>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white mt-1">
+                      <p className="text-xs text-muted-foreground font-medium">Budget</p>
+                      <p className="text-sm font-semibold text-foreground mt-1">
                         ${project.budget.toLocaleString()}
                       </p>
                     </div>
@@ -434,7 +434,7 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                 </div>
 
                 {project.requiredSkills && project.requiredSkills.length > 0 && (
-                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                  <div className="pt-4 border-t border-border">
                     <button
                       onClick={() => setExpandedProject(isExpanded ? null : project.id)}
                       className="flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
@@ -453,9 +453,9 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
                         {project.requiredSkills.map((skill, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                            className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
                           >
-                            <p className="font-medium text-slate-900 dark:text-white">{skill.name}</p>
+                            <p className="font-medium text-foreground">{skill.name}</p>
                             <Badge className={getProficiencyColor(skill.proficiency)}>{skill.proficiency}</Badge>
                           </div>
                         ))}
@@ -470,8 +470,8 @@ export function ProjectManagementPage({ onViewEmployee, userRole }: ProjectManag
       </div>
 
       {filteredProjects.length === 0 && (
-        <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center">
-          <p className="text-slate-600 dark:text-slate-400">No projects found matching your filters</p>
+        <Card className="border-border bg-card p-12 text-center">
+          <p className="text-muted-foreground">No projects found matching your filters</p>
         </Card>
       )}
     </div>
