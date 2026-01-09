@@ -16,7 +16,7 @@ export function Header() {
   }, [])
 
   return (
-    <header className="h-16 border-b border-border/40 glass sticky top-0 z-40 shadow-sm">
+    <header className="h-16 border-b border-border bg-background sticky top-0 z-40 shadow-sm">
       <div className="h-full px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* Search - Left */}
         <div className="flex-1 max-w-md">
@@ -25,7 +25,7 @@ export function Header() {
             <Input
               type="search"
               placeholder="Search employees, projects..."
-              className="pl-10 bg-muted/30 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-200 rounded-xl"
+              className="pl-10 bg-muted/30 border-border/50 focus:bg-card focus:border-primary/50 transition-all duration-200 rounded-xl"
             />
           </div>
         </div>

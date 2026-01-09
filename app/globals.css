@@ -71,7 +71,7 @@
   :root {
     --radius: 0.75rem;
 
-    /* Light backgrounds with subtle gradients */
+    /* Solid backgrounds - NO transparency */
     --background: 240 20% 99%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -115,7 +115,7 @@
   }
 
   .dark {
-    /* Rich dark backgrounds */
+    /* Rich dark backgrounds - SOLID */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 224 71% 7%;
@@ -282,33 +282,21 @@
   }
 
   .bg-gradient-subtle {
-    background: linear-gradient(135deg, 
-      hsl(var(--background)), 
-      hsl(240 20% 97%), 
-      hsl(var(--background))
-    );
-  }
-
-  .dark .bg-gradient-subtle {
-    background: linear-gradient(135deg, 
-      hsl(var(--background)), 
-      hsl(224 71% 6%), 
-      hsl(var(--background))
-    );
+    background: hsl(var(--background));
   }
 
   .bg-mesh-gradient {
     background: 
-      radial-gradient(at 40% 20%, hsl(243 75% 59% / 0.2) 0px, transparent 50%),
-      radial-gradient(at 80% 80%, hsl(262 83% 58% / 0.2) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsl(280 87% 65% / 0.2) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, hsl(243 75% 59% / 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 80%, hsl(262 83% 58% / 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsl(280 87% 65% / 0.1) 0px, transparent 50%);
   }
 
   .dark .bg-mesh-gradient {
     background: 
-      radial-gradient(at 40% 20%, hsl(243 75% 65% / 0.15) 0px, transparent 50%),
-      radial-gradient(at 80% 80%, hsl(262 83% 68% / 0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsl(280 87% 75% / 0.15) 0px, transparent 50%);
+      radial-gradient(at 40% 20%, hsl(243 75% 65% / 0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 80%, hsl(262 83% 68% / 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsl(280 87% 75% / 0.08) 0px, transparent 50%);
   }
 
   /* Text gradients */
@@ -323,19 +311,6 @@
     background: linear-gradient(135deg, hsl(243 75% 70%), hsl(262 83% 75%));
     -webkit-background-clip: text;
     background-clip: text;
-  }
-
-  /* Glass morphism */
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .dark .glass {
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Card enhancements */
@@ -362,7 +337,7 @@
 
   /* Dot pattern */
   .bg-dot-pattern {
-    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
+    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
     background-size: 16px 16px;
   }
 

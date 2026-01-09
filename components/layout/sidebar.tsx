@@ -50,12 +50,12 @@ export const Sidebar = memo(function Sidebar({ collapsed, onToggle }: SidebarPro
   return (
     <div
       className={cn(
-        "fixed left-0 top-0 h-screen glass border-r border-border/40 transition-all duration-300 z-50 flex flex-col shadow-xl",
+        "fixed left-0 top-0 h-screen bg-card border-r border-border transition-all duration-300 z-50 flex flex-col shadow-lg",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Logo & Toggle */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-border/40">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-border">
         {!collapsed && (
           <Link href="/dashboard" className="flex items-center space-x-2 group">
             <div className="relative">
@@ -126,8 +126,8 @@ export const Sidebar = memo(function Sidebar({ collapsed, onToggle }: SidebarPro
 
       {/* User Info */}
       {!collapsed && (
-        <div className="p-4 border-t border-border/40">
-          <div className="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-200 cursor-pointer group">
+        <div className="p-4 border-t border-border">
+          <div className="flex items-center space-x-3 p-3 rounded-xl bg-muted hover:bg-muted/80 transition-all duration-200 cursor-pointer group">
             <div className="relative flex-shrink-0">
               <div className="absolute inset-0 bg-gradient-primary rounded-full opacity-75 blur-sm group-hover:blur-md transition-all"></div>
               <div className="relative w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">

@@ -32,15 +32,15 @@ export default function DashboardLayout({
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
-      {/* Subtle decorative background elements - reduced opacity for better card visibility */}
-      <div className="fixed inset-0 bg-mesh-gradient opacity-20 pointer-events-none"></div>
-      <div className="fixed inset-0 bg-dot-pattern opacity-30 pointer-events-none"></div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Very subtle decorative background elements */}
+      <div className="fixed inset-0 bg-mesh-gradient opacity-10 pointer-events-none"></div>
+      <div className="fixed inset-0 bg-dot-pattern opacity-20 pointer-events-none"></div>
       
-      {/* Animated blobs - very subtle */}
-      <div className="fixed top-0 -left-4 w-72 h-72 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob pointer-events-none"></div>
-      <div className="fixed top-0 -right-4 w-72 h-72 bg-purple-300/5 dark:bg-purple-500/5 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000 pointer-events-none"></div>
-      <div className="fixed -bottom-8 left-20 w-72 h-72 bg-indigo-300/5 dark:bg-indigo-500/5 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000 pointer-events-none"></div>
+      {/* Animated blobs - extremely subtle */}
+      <div className="fixed top-0 -left-4 w-72 h-72 bg-primary/3 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob pointer-events-none"></div>
+      <div className="fixed top-0 -right-4 w-72 h-72 bg-purple-300/3 dark:bg-purple-500/3 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 pointer-events-none"></div>
+      <div className="fixed -bottom-8 left-20 w-72 h-72 bg-indigo-300/3 dark:bg-indigo-500/3 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000 pointer-events-none"></div>
       
       <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className={`transition-all duration-300 ease-in-out ${sidebarCollapsed ? "ml-16" : "ml-64"}`}>
@@ -49,8 +49,8 @@ export default function DashboardLayout({
           <div className="max-w-7xl mx-auto">
             <Suspense fallback={
               <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-48 bg-muted/50 rounded-lg"></div>
-                <div className="h-64 bg-muted/50 rounded-xl"></div>
+                <div className="h-8 w-48 bg-muted rounded-lg"></div>
+                <div className="h-64 bg-card rounded-xl"></div>
               </div>
             }>
               {children}
