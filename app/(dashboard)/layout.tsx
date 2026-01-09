@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { useRole } from "@/lib/role-context"
 import { Sidebar } from "@/components/layout/sidebar"
@@ -39,7 +39,14 @@ export default function DashboardLayout({
         <Header />
         <main className="p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            {children}
+            <Suspense fallback={
+              <div className="space-y-6 animate-pulse">
+                <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded"></div>
+                <div className="h-64 bg-slate-200 dark:bg-slate-800 rounded"></div>
+              </div>
+            }>
+              {children}
+            </Suspense>
           </div>
         </main>
       </div>
