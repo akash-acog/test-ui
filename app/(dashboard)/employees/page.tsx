@@ -14,14 +14,5 @@ export default function EmployeesPage() {
     router.push(`/employees/${id}`)
   }
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Employees</h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-1">Manage your team members and their details</p>
-      </div>
-
-      <EmployeeListPage onViewEmployee={handleViewEmployee} userRole={user.role} />
-    </div>
-  )
+  return <EmployeeListPage onViewEmployee={handleViewEmployee} userRole={user.role} />
 }
