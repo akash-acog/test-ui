@@ -180,7 +180,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
         <Alert className="border-destructive/50 bg-destructive/10">
           <AlertCircle className="h-4 w-4 text-destructive" />
           <AlertDescription className="text-destructive font-medium">
-            {overallocatedEmployees.length} employee(s) over-allocated (>100% utilization)
+            {overallocatedEmployees.length} employee(s) over-allocated (&gt;100% utilization)
           </AlertDescription>
         </Alert>
       )}
