@@ -49,39 +49,39 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Employees</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <h1 className="text-4xl font-bold text-foreground">Employees</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Manage and view employee information across your organization
           </p>
         </div>
         {canAdd && (
-          <Button className="gap-2 bg-gradient-to-r from-primary to-accent text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+          <Button className="gap-2 bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
             <Plus className="h-4 w-4" />
             Add Employee
           </Button>
         )}
       </div>
 
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <Card className="border-border bg-card p-6">
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
             Search & Filter
           </h3>
           <div className="grid gap-3 md:grid-cols-5">
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by name, code, or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
+                  className="pl-9 bg-muted/50 border-border"
                 />
               </div>
             </div>
 
             <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
@@ -95,7 +95,7 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
             </Select>
 
             <Select value={locationFilter} onValueChange={setLocationFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
               <SelectContent>
@@ -109,7 +109,7 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
             </Select>
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Employee Type" />
               </SelectTrigger>
               <SelectContent>
@@ -129,17 +129,17 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
         {filteredEmployees.map((emp) => (
           <Card
             key={emp.id}
-            className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+            className="border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
           >
             <div className="p-6 space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center font-bold text-sm">
+                  <div className="h-12 w-12 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
                     {emp.avatar}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 dark:text-white truncate">{emp.name}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{emp.code}</p>
+                    <p className="font-semibold text-foreground truncate">{emp.name}</p>
+                    <p className="text-xs text-muted-foreground">{emp.code}</p>
                   </div>
                 </div>
                 <Badge variant="outline" className="text-xs">
@@ -149,16 +149,16 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-600 dark:text-slate-400">Designation</span>
-                  <span className="font-medium text-slate-900 dark:text-white">{emp.designation}</span>
+                  <span className="text-muted-foreground">Designation</span>
+                  <span className="font-medium text-foreground">{emp.designation}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-600 dark:text-slate-400">Department</span>
-                  <span className="font-medium text-slate-900 dark:text-white">{emp.department}</span>
+                  <span className="text-muted-foreground">Department</span>
+                  <span className="font-medium text-foreground">{emp.department}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-600 dark:text-slate-400">Location</span>
-                  <span className="font-medium text-slate-900 dark:text-white">{emp.location}</span>
+                  <span className="text-muted-foreground">Location</span>
+                  <span className="font-medium text-foreground">{emp.location}</span>
                 </div>
               </div>
 
@@ -178,7 +178,7 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
                   </Button>
                 )}
                 {canDelete && (
-                  <Button variant="ghost" size="sm" className="text-destructive">
+                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
@@ -189,8 +189,8 @@ export function EmployeeListPage({ onViewEmployee, userRole }: EmployeeListPageP
       </div>
 
       {filteredEmployees.length === 0 && (
-        <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center">
-          <p className="text-slate-600 dark:text-slate-400">No employees found matching your filters</p>
+        <Card className="border-border bg-card p-12 text-center">
+          <p className="text-muted-foreground">No employees found matching your filters</p>
         </Card>
       )}
     </div>
