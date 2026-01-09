@@ -87,18 +87,18 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
 
   const getStatusColor = (availability: string) => {
     const colors: Record<string, string> = {
-      Free: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-      Partial: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-      "Fully Allocated": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+      Free: "bg-chart-3/10 text-chart-3 dark:bg-chart-3/20",
+      Partial: "bg-chart-4/10 text-chart-4 dark:bg-chart-4/20",
+      "Fully Allocated": "bg-chart-1/10 text-chart-1 dark:bg-chart-1/20",
     }
-    return colors[availability] || "bg-slate-100 text-slate-800"
+    return colors[availability] || "bg-muted text-muted-foreground"
   }
 
   const getUtilizationColor = (utilization: number) => {
-    if (utilization > 100) return "bg-red-500"
-    if (utilization === 100) return "bg-orange-500"
-    if (utilization >= 50) return "bg-amber-500"
-    return "bg-emerald-500"
+    if (utilization > 100) return "bg-destructive"
+    if (utilization === 100) return "bg-chart-4"
+    if (utilization >= 50) return "bg-chart-2"
+    return "bg-chart-3"
   }
 
   const canCreate = hasPermission(user?.role || userRole || "employee", "manage_allocations")
@@ -124,15 +124,15 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Resource Allocation</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <h1 className="text-4xl font-bold text-foreground">Resource Allocation</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Track employee utilization and manage project allocations
           </p>
         </div>
         {canCreate && (
           <Dialog open={isAddAllocationOpen} onOpenChange={setIsAddAllocationOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-gradient-to-r from-primary to-accent text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+              <Button className="gap-2 bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                 <Plus className="h-4 w-4" />
                 New Allocation
               </Button>
@@ -150,7 +150,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       value={allocationForm.employee}
                       onValueChange={(v) => setAllocationForm({ ...allocationForm, employee: v })}
                     >
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue placeholder="Choose employee" />
                       </SelectTrigger>
                       <SelectContent>
@@ -168,7 +168,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       value={allocationForm.project}
                       onValueChange={(v) => setAllocationForm({ ...allocationForm, project: v })}
                     >
-                      <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectTrigger className="bg-muted/50 border-border">
                         <SelectValue placeholder="Choose project" />
                       </SelectTrigger>
                       <SelectContent>
@@ -191,16 +191,16 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       max={selectedEmployeeAvailability}
                       value={allocationForm.allocationPercent}
                       onChange={(e) => setAllocationForm({ ...allocationForm, allocationPercent: e.target.value })}
-                      className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                      className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
                     />
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                      <span className="text-sm text-muted-foreground">
                         Selected:{" "}
-                        <span className="font-bold text-slate-900 dark:text-white">
+                        <span className="font-bold text-foreground">
                           {allocationForm.allocationPercent}%
                         </span>
                       </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-500">
+                      <span className="text-xs text-muted-foreground">
                         Max available: {selectedEmployeeAvailability}%
                       </span>
                     </div>
@@ -215,7 +215,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       type="date"
                       value={allocationForm.startDate}
                       onChange={(e) => setAllocationForm({ ...allocationForm, startDate: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                   <div className="space-y-2">
@@ -225,7 +225,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       type="date"
                       value={allocationForm.endDate}
                       onChange={(e) => setAllocationForm({ ...allocationForm, endDate: e.target.value })}
-                      className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      className="bg-muted/50 border-border"
                     />
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       id="billable"
                       checked={allocationForm.billable}
                       onChange={(e) => setAllocationForm({ ...allocationForm, billable: e.target.checked })}
-                      className="rounded border border-slate-300 dark:border-slate-600"
+                      className="rounded border-border"
                     />
                     <Label htmlFor="billable" className="cursor-pointer font-medium">
                       Billable Work
@@ -252,17 +252,17 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                     placeholder="Add any specific notes about this allocation"
                     value={allocationForm.notes}
                     onChange={(e) => setAllocationForm({ ...allocationForm, notes: e.target.value })}
-                    className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                    className="bg-muted/50 border-border"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex justify-end gap-2 pt-4 border-t border-border">
                   <Button variant="outline" onClick={() => setIsAddAllocationOpen(false)}>
                     Cancel
                   </Button>
                   <Button
                     onClick={handleAllocateResource}
-                    className="bg-gradient-to-r from-primary to-accent text-white"
+                    className="bg-primary text-primary-foreground"
                   >
                     Create Allocation
                   </Button>
@@ -274,34 +274,34 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
       </div>
 
       {overallocatedEmployees.length > 0 && (
-        <Alert className="border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20">
-          <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-          <AlertDescription className="text-red-800 dark:text-red-300 font-medium">
+        <Alert className="border-destructive/50 bg-destructive/10">
+          <AlertCircle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-destructive font-medium">
             {overallocatedEmployees.length} employee(s) with over-allocation conflicts exceeding 100% utilization
           </AlertDescription>
         </Alert>
       )}
 
-      <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <Card className="border-border bg-card p-6">
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wide">
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide">
             Search & Filter
           </h3>
           <div className="grid gap-3 md:grid-cols-4">
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by employee name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg"
+                  className="pl-9 bg-muted/50 border-border"
                 />
               </div>
             </div>
 
             <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
@@ -315,7 +315,7 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg">
+              <SelectTrigger className="bg-muted/50 border-border">
                 <SelectValue placeholder="Availability" />
               </SelectTrigger>
               <SelectContent>
@@ -338,36 +338,36 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
               key={item.employee.id}
               className={`border transition-all duration-300 ${
                 isOverallocated
-                  ? "border-red-200 dark:border-red-900/30 bg-red-50/50 dark:bg-red-900/10"
-                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                  ? "border-destructive/50 bg-destructive/5"
+                  : "border-border bg-card"
               } p-6 hover:shadow-lg hover:-translate-y-1`}
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{item.employee.name}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    <h3 className="text-lg font-bold text-foreground">{item.employee.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
                       {item.employee.code} • {item.employee.designation} • {item.employee.department}
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <Badge className={getStatusColor(item.availabilityStatus)}>{item.availabilityStatus}</Badge>
                     {isOverallocated && (
-                      <Badge variant="destructive" className="bg-red-500 hover:bg-red-600">
+                      <Badge variant="destructive">
                         Over-allocated
                       </Badge>
                     )}
                   </div>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <div className="grid gap-4 md:grid-cols-3 pt-4 border-t border-border">
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                         Utilization
                       </span>
                       <span
-                        className={`text-sm font-bold ${isOverallocated ? "text-red-600 dark:text-red-400" : "text-slate-900 dark:text-white"}`}
+                        className={`text-sm font-bold ${isOverallocated ? "text-destructive" : "text-foreground"}`}
                       >
                         {item.utilization}%
                       </span>
@@ -377,45 +377,45 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                       className={`h-2 ${getUtilizationColor(item.utilization)}`}
                     />
                     {isOverallocated && (
-                      <p className="text-xs text-red-600 dark:text-red-400 mt-2 font-medium">
+                      <p className="text-xs text-destructive mt-2 font-medium">
                         Exceeds by {item.utilization - 100}%
                       </p>
                     )}
                   </div>
                   <div className="flex flex-col justify-between">
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                       Availability
                     </p>
                     <p
-                      className={`text-lg font-bold ${item.availabilityPercentage === 0 ? "text-orange-600 dark:text-orange-400" : item.availabilityPercentage >= 50 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}
+                      className={`text-lg font-bold ${item.availabilityPercentage === 0 ? "text-chart-4" : item.availabilityPercentage >= 50 ? "text-chart-3" : "text-chart-2"}`}
                     >
                       {item.availabilityPercentage}%
                     </p>
                   </div>
                   <div className="flex flex-col justify-between">
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                       Active Projects
                     </p>
-                    <p className="text-lg font-bold text-slate-900 dark:text-white">{item.allocations.length}</p>
+                    <p className="text-lg font-bold text-foreground">{item.allocations.length}</p>
                   </div>
                 </div>
 
                 {item.allocations.length > 0 ? (
-                  <div className="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-4">
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Current Allocations</h4>
+                  <div className="space-y-3 border-t border-border pt-4">
+                    <h4 className="text-sm font-semibold text-foreground">Current Allocations</h4>
                     {item.allocations.map((alloc) => (
                       <div
                         key={alloc.id}
-                        className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 p-4"
+                        className="flex items-center justify-between rounded-lg bg-muted/50 p-4"
                       >
                         <div className="flex-1">
-                          <p className="font-semibold text-slate-900 dark:text-white">{alloc.project?.name}</p>
+                          <p className="font-semibold text-foreground">{alloc.project?.name}</p>
                           {alloc.notes && (
-                            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{alloc.notes}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{alloc.notes}</p>
                           )}
                         </div>
                         <div className="text-right ml-4">
-                          <p className="font-bold text-lg text-slate-900 dark:text-white">{alloc.allocationPercent}%</p>
+                          <p className="font-bold text-lg text-foreground">{alloc.allocationPercent}%</p>
                           <Badge variant={alloc.billable ? "default" : "secondary"} className="text-xs mt-2">
                             {alloc.billable ? "Billable" : "Non-billable"}
                           </Badge>
@@ -424,8 +424,8 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
                     ))}
                   </div>
                 ) : (
-                  <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400 text-center py-4">No active allocations</p>
+                  <div className="border-t border-border pt-4">
+                    <p className="text-sm text-muted-foreground text-center py-4">No active allocations</p>
                   </div>
                 )}
               </div>
@@ -435,8 +435,8 @@ export function AllocationDashboardPage({ onViewEmployee, userRole }: Allocation
       </div>
 
       {filteredAllocations.length === 0 && (
-        <Card className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center">
-          <p className="text-slate-600 dark:text-slate-400">No allocations found matching your filters</p>
+        <Card className="border-border bg-card p-12 text-center">
+          <p className="text-muted-foreground">No allocations found matching your filters</p>
         </Card>
       )}
     </div>
